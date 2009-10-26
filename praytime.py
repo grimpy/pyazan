@@ -2,13 +2,6 @@ import math
 import time, datetime
 from angle import *
 
-class Location(object):
-    def __init__(self, name=None, longitude=None, latitude=None, timezone=0):
-        self.longitude = longitude
-        self.latitude = latitude
-        self.name = name
-        self.timezone = timezone
-
 class Praytime(object):
     _location = None
     _day = None
@@ -48,23 +41,25 @@ class Praytime(object):
         EqT = q/15 - RA;  # equation of time
 
         sunsetangle = 0.8333
+        #get asr angle
+        asrangle = -dacot(1 + dtan(int(self.location.latitude-D)))
+        
         duhr = 12+self.location.timezone - self.location.longitude/15 - EqT
         Fajr = duhr - self.tfunc(D, self.location.latitude, 19.5)
         Isha = duhr + self.tfunc(D, self.location.latitude, 17.5)
+        Asr = duhr + self.tfunc(D, self.location.latitude, asrangle)
+        
         self.fajr = getHoursMin(Fajr)
         self.sunrise = getHoursMin(duhr - self.tfunc(D, self.location.latitude, sunsetangle))
         self.duhr = getHoursMin(duhr)
         self.maghrib = getHoursMin(duhr + self.tfunc(D, self.location.latitude, sunsetangle))
+        self.asr = getHoursMin(Asr)
         self.isha = getHoursMin(Isha)
-
-
-
+    
 
     def tfunc(self, D, lati, angle):
         Z = (1.0/15) * dacos((-dsin(angle)-dsin(D)*dsin(lati))/(dcos(lati)*dcos(D)))
         return Z
-
-
 
 def fixhour(a):
     a = a - 24.0 * (math.floor(a / 24.0));

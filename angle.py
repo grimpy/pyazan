@@ -5,6 +5,12 @@ def datan(deg):
 def dsin(deg):
     return math.sin(math.radians(deg))
 
+def dtan(deg):
+    return math.tan(math.radians(deg))
+
+def dacot(deg):
+    return math.degrees(math.atan(1/deg))
+
 def dcos(deg):
     return math.cos(math.radians(deg))
 
