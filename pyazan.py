@@ -29,7 +29,7 @@ def getNextPrayer(pray_int, prayer=None):
     if prayer:
         nextprayer = _getNexPrayer(prayer)
         prayertime = getattr(pray_int, nextprayer)
-        if isInSameDay(praytime, now):
+        if isInSameDay(prayertime, now):
             return nextprayer, prayertime
     else:
         for praytime in praytimes:
