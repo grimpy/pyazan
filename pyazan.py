@@ -1,24 +1,54 @@
 import pynotify
-import datetime
-import time
 from praytime import *
 from location import *
-from threading import Timer
+from stopwatch import Alarm, isInSameDay
+import datetime
+
 loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
 loc2 = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
-pr = Praytime(loc2)
+praytimes = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
+pray_int = Praytime(loc2)
 pynotify.init('pyazan')
 nt = pynotify.Notification("Praying Time")
 
-def getTimeDiff(praytime):
-    timenow = datetime.datetime.now()
-    rpraytime = datetime.datetime(timenow.year, timenow.month, timenow.day , praytime[0], praytime[1])
-    return rpraytime - timenow
+def getTomorrow():
+    now = datetime.datetime.now()
+    return now + datetime.timedelta(1)
 
-def showNotify():
+
+def _getNexPrayer(prayer):
+    nextprayeridx = praytimes.index(prayer)+1
+    if nextprayeridx > len(praytimes)-1:
+        nextprayeridx = 0
+    return praytimes[nextprayeridx]
+
+
+def getNextPrayer(pray_int, prayer=None):
+    nextprayer = None
+    now = datetime.datetime.now()
+    if prayer:
+        nextprayer = _getNexPrayer(prayer)
+        prayertime = getattr(pray_int, nextprayer)
+        if isInSameDay(praytime, now):
+            return nextprayer, prayertime
+    else:
+        for praytime in praytimes:
+            prt = getattr(pray_int, praytime)
+            if isInSameDay(prt, now):
+                return praytime, prt
+        pray_int = Praytime(loc2, getTomorrow())
+        prayertime = getattr(praytimes[0], pr)
+        return praytimes[0], prayertime
+
+def showNotify(message):
+    nt.update(message)
     nt.show()
 
-dt = getTimeDiff(pr.isha)
-t = Timer(5, showNotify)
-t.start()
-time.sleep(10)
+prayername, prayertime = getNextPrayer(pray_int)
+alarm = Alarm()
+
+while True:
+    alarm.addAlarm(prayertime, showNotify, "Time to pray %s" % prayername)
+    alarm.waitForAlarm(prayertime)
+    #get next prayer
+    prayername, prayertime = getNextPrayer(pray_int, prayername)
