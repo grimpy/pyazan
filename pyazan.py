@@ -8,6 +8,7 @@ loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
 loc2 = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
 praytimes = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 pray_int = Praytime(loc2)
+
 pynotify.init('pyazan')
 nt = pynotify.Notification("Praying Time")
 
@@ -31,13 +32,16 @@ def getNextPrayer(pray_int, prayer=None):
         prayertime = getattr(pray_int, nextprayer)
         if isInSameDay(prayertime, now):
             return nextprayer, prayertime
+        pray_int.day = getTomorrow()
+        prayertime = getattr(pray_int, nextprayer)
+        return nextprayer, prayertime
     else:
         for praytime in praytimes:
             prt = getattr(pray_int, praytime)
             if isInSameDay(prt, now):
                 return praytime, prt
-        pray_int = Praytime(loc2, getTomorrow())
-        prayertime = getattr(praytimes[0], pr)
+        pray_int.day = getTomorrow()
+        prayertime = getattr(pray_int, praytimes[0])
         return praytimes[0], prayertime
 
 def showNotify(message):
@@ -48,6 +52,7 @@ prayername, prayertime = getNextPrayer(pray_int)
 alarm = Alarm()
 
 while True:
+    print prayertime, prayername
     alarm.addAlarm(prayertime, showNotify, "Time to pray %s" % prayername)
     alarm.waitForAlarm(prayertime)
     #get next prayer
