@@ -46,6 +46,7 @@ def getNextPrayer(pray_int, prayer=None):
 
 def showNotify(message):
     nt.update(message)
+    nt.set_timeout(0)
     nt.show()
 
 prayername, prayertime = getNextPrayer(pray_int)
