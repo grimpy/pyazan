@@ -1,8 +1,9 @@
 import praytime
 from location import Location
 
+praytimes = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 class Praytime(object):
-    starttime = (22,24)
+    starttime = (0,20)
     counter = 0
     def __init__(self, *args):
         print "Construct", args

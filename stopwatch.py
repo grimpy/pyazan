@@ -2,6 +2,7 @@
 import time
 import threading
 import datetime
+import glib
 
 
 def isInSameDay(timearg, refdate):
@@ -26,10 +27,11 @@ class Alarm():
         self.alarms = dict()
 
     def addAlarm(self, timearg, func, *args, **kwargs):
+        print timearg
         delta = convertToEpoch(timearg) - time.time()
-        timer = threading.Timer(delta, func, args, kwargs)
-        timer.start()
-        self.alarms[timearg] = timer
+        if delta < 0:
+            delta = 0
+        return glib.timeout_add_seconds(int(delta), func, args, kwargs)
 
     def getAlarm(self, timearg):
         if timearg in self.alarms:

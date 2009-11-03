@@ -1,4 +1,5 @@
 import pynotify
+import glib
 from praytime import *
 from location import *
 from stopwatch import Alarm, isInSameDay
@@ -23,9 +24,15 @@ def _getNexPrayer(prayer):
         nextprayeridx = 0
     return praytimes[nextprayeridx]
 
+def _getPreviousPrayer(prayer):
+    prevprayerindex = praytimes.index(prayer)-1
+    if prevprayerindex < 0:
+        prevprayerindex = len(praytimes) -1
+    return praytimes[prevprayerindex]
 
 def getNextPrayer(pray_int, prayer=None):
     nextprayer = None
+    print prayer
     now = datetime.datetime.now()
     if prayer:
         nextprayer = _getNexPrayer(prayer)
@@ -52,9 +59,25 @@ def showNotify(message):
 prayername, prayertime = getNextPrayer(pray_int)
 alarm = Alarm()
 
-while True:
-    print prayertime, prayername
-    alarm.addAlarm(prayertime, showNotify, "Time to pray %s" % prayername)
-    alarm.waitForAlarm(prayertime)
-    #get next prayer
-    prayername, prayertime = getNextPrayer(pray_int, prayername)
+class PrayerTimes(object):
+    def __init__(self, praytime):
+        self.praytime = praytime
+        self.waitingfor = getNextPrayer(self.praytime)
+        prayername = _getPreviousPrayer(self.waitingfor[0])
+        self.now = (prayername, getattr(self.praytime, prayername))
+        self.waitingfor = self.now
+    
+    def showNotify(self, *args):
+        showNotify("Time to pray %s" % (args[0][0]))
+        self.now = self.waitingfor
+    
+    def main(self):
+        if self.waitingfor == self.now:
+            self.waitingfor = getNextPrayer(self.praytime, self.now[0])
+            print self.waitingfor
+            alarm.addAlarm(self.waitingfor[1], self.showNotify, self.waitingfor[0])
+        return True
+    
+prt2 = PrayerTimes(pray_int)
+glib.timeout_add_seconds(10, prt2.main)
+glib.MainLoop().run()
