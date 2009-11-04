@@ -27,7 +27,6 @@ class Alarm():
         self.alarms = dict()
 
     def addAlarm(self, timearg, func, *args, **kwargs):
-        print timearg
         delta = convertToEpoch(timearg) - time.time()
         if delta < 0:
             delta = 0

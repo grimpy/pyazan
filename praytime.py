@@ -1,6 +1,43 @@
 import math
 import time, datetime
+from stopwatch import isInSameDay
 from angle import *
+
+PRAYTIMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
+
+def _getNexPrayer(prayer):
+    nextprayeridx = PRAYTIMES.index(prayer)+1
+    if nextprayeridx > len(PRAYTIMES)-1:
+        nextprayeridx = 0
+    return PRAYTIMES[nextprayeridx]
+
+def getPreviousPrayer(prayer):
+    prevprayerindex = PRAYTIMES.index(prayer)-1
+    if prevprayerindex < 0:
+        prevprayerindex = len(PRAYTIMES) -1
+    return PRAYTIMES[prevprayerindex]
+
+def getNextPrayer(pray_int, prayer=None):
+    nextprayer = None
+    print prayer
+    now = datetime.datetime.now()
+    if prayer:
+        nextprayer = _getNexPrayer(prayer)
+        prayertime = getattr(pray_int, nextprayer)
+        if isInSameDay(prayertime, now):
+            return nextprayer, prayertime
+        pray_int.day = getTomorrow()
+        prayertime = getattr(pray_int, nextprayer)
+        return nextprayer, prayertime
+    else:
+        for praytime in PRAYTIMES:
+            prt = getattr(pray_int, praytime)
+            if isInSameDay(prt, now):
+                return praytime, prt
+        pray_int.day = getTomorrow()
+        prayertime = getattr(pray_int, PRAYTIMES[0])
+        return PRAYTIMES[0], prayertime
+
 
 class Praytime(object):
     _location = None
