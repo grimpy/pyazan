@@ -107,5 +107,5 @@ def fixhour(a):
 def getHoursMin(hourdec):
     hour = int(hourdec)
     min = math.ceil((hourdec - hour)*(100)/(10)*(6))
-    return (hour, min)
+    return (hour, int(min))
 
