@@ -5,13 +5,29 @@ from angle import *
 
 PRAYTIMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
-def _getNexPrayer(prayer):
+def fixhour(a):
+    a = a - 24.0 * (math.floor(a / 24.0));
+    a = a+24.0 if a < 0 else a;
+    return a;
+
+
+def getHoursMin(hourdec):
+    hour = int(hourdec)
+    min = math.ceil((hourdec - hour)*(100)/(10)*(6))
+    return (hour, int(min))
+
+def getTomorrow():
+    now = datetime.datetime.now()
+    return now + datetime.timedelta(1)
+
+
+def getNexPrayerName(prayer):
     nextprayeridx = PRAYTIMES.index(prayer)+1
     if nextprayeridx > len(PRAYTIMES)-1:
         nextprayeridx = 0
     return PRAYTIMES[nextprayeridx]
 
-def getPreviousPrayer(prayer):
+def getPreviousPrayerName(prayer):
     prevprayerindex = PRAYTIMES.index(prayer)-1
     if prevprayerindex < 0:
         prevprayerindex = len(PRAYTIMES) -1
@@ -22,7 +38,7 @@ def getNextPrayer(pray_int, prayer=None):
     print prayer
     now = datetime.datetime.now()
     if prayer:
-        nextprayer = _getNexPrayer(prayer)
+        nextprayer = getNexPrayerName(prayer)
         prayertime = getattr(pray_int, nextprayer)
         if isInSameDay(prayertime, now):
             return nextprayer, prayertime
@@ -98,14 +114,9 @@ class Praytime(object):
         Z = (1.0/15) * dacos((-dsin(angle)-dsin(D)*dsin(lati))/(dcos(lati)*dcos(D)))
         return Z
 
-def fixhour(a):
-    a = a - 24.0 * (math.floor(a / 24.0));
-    a = a+24.0 if a < 0 else a;
-    return a;
-
-
-def getHoursMin(hourdec):
-    hour = int(hourdec)
-    min = math.ceil((hourdec - hour)*(100)/(10)*(6))
-    return (hour, int(min))
-
+    def __str__(self):
+        strrepr = []
+        for praytime in PRAYTIMES:
+            timetuple = getattr(self,praytime)
+            strrepr.append("%s: %d:%d" % (praytime.capitalize(), timetuple[0], timetuple[1]))
+        return "\n".join(strrepr)

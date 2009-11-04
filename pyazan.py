@@ -4,6 +4,7 @@ from praytime import *
 from location import *
 from stopwatch import Alarm
 import datetime
+import gtk
 
 loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
 loc2 = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
@@ -11,6 +12,7 @@ pray_int = Praytime(loc2)
 
 pynotify.init('pyazan')
 nt = pynotify.Notification("Praying Time")
+nt.set_timeout(0)
 
 def getTomorrow():
     now = datetime.datetime.now()
@@ -18,16 +20,18 @@ def getTomorrow():
 
 def showNotify(message):
     nt.update(message)
-    nt.set_timeout(0)
     nt.show()
 
 alarm = Alarm()
+status_icon = gtk.StatusIcon()
+status_icon.set_from_file('azan.png')
+status_icon.set_tooltip("%s" % (pray_int))
 
 class PrayerTimes(object):
     def __init__(self, praytime):
         self.praytime = praytime
         self.waitingfor = getNextPrayer(self.praytime)
-        prayername = getPreviousPrayer(self.waitingfor[0])
+        prayername = getPreviousPrayerName(self.waitingfor[0])
         self.now = (prayername, getattr(self.praytime, prayername))
         self.waitingfor = self.now
     
