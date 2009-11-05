@@ -118,5 +118,6 @@ class Praytime(object):
         strrepr = []
         for praytime in PRAYTIMES:
             timetuple = getattr(self,praytime)
-            strrepr.append("%s: %d:%d" % (praytime.capitalize(), timetuple[0], timetuple[1]))
+            timestring = "%d:%02d" % (timetuple[0], timetuple[1])
+            strrepr.append("%s: %s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
