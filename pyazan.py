@@ -1,5 +1,5 @@
 import pynotify
-import glib
+import gobject
 from praytime import *
 from location import *
 from stopwatch import Alarm
@@ -49,4 +49,4 @@ class PrayerTimes(object):
     
 prt2 = PrayerTimes(pray_int)
 prt2.main()
-glib.MainLoop().run()
+gobject.MainLoop().run()
