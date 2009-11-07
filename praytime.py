@@ -2,6 +2,8 @@ import math
 import time, datetime
 from stopwatch import isInSameDay
 from angle import *
+from stopwatch import Alarm
+from event import Event
 
 PRAYTIMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
@@ -121,3 +123,38 @@ class Praytime(object):
             timestring = "%d:%02d" % (timetuple[0], timetuple[1])
             strrepr.append("%s: %s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
+
+class PrayerTimesNotifier(object):
+    def __init__(self, location):
+        self.praytime = Praytime(location)
+        self.waitingfor = getNextPrayer(self.praytime)
+        prayername = getPreviousPrayerName(self.waitingfor[0])
+        self.now = (prayername, getattr(self.praytime, prayername))
+        self.waitingfor = self.now
+        self.alarm = Alarm()
+        self.__ontime = Event()
+    
+    @property
+    def onTime(self):
+        return self.__ontime
+    
+    def start(self):
+        """
+        Start notifying on prayers times
+        """
+        if self.waitingfor == self.now:
+            self.waitingfor = getNextPrayer(self.praytime, self.now[0])
+            print self.waitingfor
+            self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0])
+        return True
+    
+    def _notify(self, *args):
+        self.now = self.waitingfor
+        self.__ontime.fire(*args)
+        self.start()
+    
+    def __str__(self):
+        return str(self.praytime)
+    
+    def __repr__(self):
+        return str(self)
