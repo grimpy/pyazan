@@ -3,7 +3,7 @@ from location import Location
 
 praytimes = praytime.PRAYTIMES
 class Praytime(object):
-    starttime = (8,28)
+    starttime = (21,00)
     counter = 0
     def __init__(self, *args):
         print "Construct", args
@@ -14,15 +14,15 @@ class Praytime(object):
     def setDate(self, *args):
         print "SetDate", args
 
-
-loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
-loc2 = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
-pr = praytime.Praytime(loc2)
-print 'Fajr', pr.fajr
-print 'Sunrise', pr.sunrise
-print 'Duhr', pr.duhr
-print 'Asr', pr.asr
-print 'Mahrib', pr.maghrib
-print 'Isha', pr.isha
+if __name__ == '__main__':
+    loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
+    loc2 = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
+    pr = praytime.Praytime(loc2)
+    print 'Fajr', pr.fajr
+    print 'Sunrise', pr.sunrise
+    print 'Duhr', pr.duhr
+    print 'Asr', pr.asr
+    print 'Mahrib', pr.maghrib
+    print 'Isha', pr.isha
 
 

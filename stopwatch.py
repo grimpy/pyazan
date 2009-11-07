@@ -26,7 +26,7 @@ class Alarm():
         delta = convertToEpoch(timearg) - time.time()
         if delta < 0:
             delta = 0
-        return gobject.timeout_add_seconds(int(delta), func, args, kwargs)
+        return gobject.timeout_add_seconds(int(delta), func, *args, **kwargs)
 
 if __name__ == '__main__':
     def testfunc(a):

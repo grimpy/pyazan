@@ -9,9 +9,9 @@ class Event(object):
     def removeCallback(self, callback):
         self.__callbacks.remove(callback)
     
-    def fire(self, *args, **kwards):
+    def fire(self, *args, **kwargs):
         for call in self.__callbacks:
             try:
-                call(*args, **kwards)
-            except:
-                print "Error in handler %s" % call
+                call(*args, **kwargs)
+            except Exception, e:
+                print "Error in handler %s, errormsg %s" % (call, e)

@@ -52,6 +52,7 @@
                             <property name="visible">True</property>
                             <property name="n_rows">8</property>
                             <property name="n_columns">2</property>
+                            <property name="row_spacing">3</property>
                             <child>
                               <object class="GtkLabel" id="lbl_opions">
                                 <property name="height_request">12</property>
@@ -177,21 +178,29 @@
                               <packing>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
+                                <property name="x_padding">25</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button4">
-                                <property name="label" translatable="yes">button</property>
+                              <object class="GtkAlignment" id="alignment12">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
+                                <property name="xalign">1</property>
+                                <property name="right_padding">140</property>
+                                <child>
+                                  <object class="GtkButton" id="bnt_change_loc">
+                                    <property name="label" translatable="yes">Change...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
+                                <property name="x_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -259,10 +268,11 @@
                         <child>
                           <object class="GtkTable" id="table2">
                             <property name="visible">True</property>
-                            <property name="n_rows">11</property>
+                            <property name="n_rows">12</property>
                             <property name="n_columns">2</property>
+                            <property name="row_spacing">3</property>
                             <child>
-                              <object class="GtkCheckButton" id="chkbtn_enablenot1">
+                              <object class="GtkCheckButton" id="chkbtn_enablenot">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -319,11 +329,12 @@
                                 <property name="visible">True</property>
                                 <property name="right_padding">215</property>
                                 <child>
-                                  <object class="GtkSpinButton" id="spinbutton1">
+                                  <object class="GtkSpinButton" id="spinbtn_not_timeout">
                                     <property name="width_request">40</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">&#x25CF;</property>
+                                    <property name="climb_rate">0.01</property>
                                     <property name="numeric">True</property>
                                   </object>
                                 </child>
@@ -346,8 +357,8 @@
                               </object>
                               <packing>
                                 <property name="right_attach">2</property>
-                                <property name="top_attach">3</property>
-                                <property name="bottom_attach">4</property>
+                                <property name="top_attach">4</property>
+                                <property name="bottom_attach">5</property>
                               </packing>
                             </child>
                             <child>
@@ -361,8 +372,8 @@
                                 </attributes>
                               </object>
                               <packing>
-                                <property name="top_attach">4</property>
-                                <property name="bottom_attach">5</property>
+                                <property name="top_attach">5</property>
+                                <property name="bottom_attach">6</property>
                               </packing>
                             </child>
                             <child>
@@ -382,8 +393,8 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="top_attach">5</property>
-                                <property name="bottom_attach">6</property>
+                                <property name="top_attach">6</property>
+                                <property name="bottom_attach">7</property>
                               </packing>
                             </child>
                             <child>
@@ -403,6 +414,8 @@
                                 </child>
                               </object>
                               <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
                                 <property name="top_attach">6</property>
                                 <property name="bottom_attach">7</property>
                               </packing>
@@ -445,8 +458,10 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="top_attach">8</property>
-                                <property name="bottom_attach">9</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">7</property>
+                                <property name="bottom_attach">8</property>
                               </packing>
                             </child>
                             <child>
@@ -466,8 +481,8 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="top_attach">9</property>
-                                <property name="bottom_attach">10</property>
+                                <property name="top_attach">8</property>
+                                <property name="bottom_attach">9</property>
                               </packing>
                             </child>
                             <child>
@@ -487,8 +502,36 @@
                                 </child>
                               </object>
                               <packing>
-                                <property name="top_attach">10</property>
-                                <property name="bottom_attach">11</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">8</property>
+                                <property name="bottom_attach">9</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label5">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes">Notification text</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">3</property>
+                                <property name="bottom_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="txt_nt">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="text" translatable="yes">It's time to pray</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">3</property>
+                                <property name="bottom_attach">4</property>
                               </packing>
                             </child>
                             <child>
@@ -567,7 +610,7 @@
             <property name="spacing">5</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button3">
+              <object class="GtkButton" id="btn_pref_apply">
                 <property name="label" translatable="yes">gtk-apply</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -595,7 +638,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="btn_pref_ok">
                 <property name="label" translatable="yes">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -628,6 +671,54 @@
     </columns>
     <data>
       <row>
+        <col id="0" translatable="yes">GMT -12</col>
+        <col id="1">-12</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -11</col>
+        <col id="1">-11</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -10</col>
+        <col id="1">-10</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -9</col>
+        <col id="1">-9</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -8</col>
+        <col id="1">-8</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -7</col>
+        <col id="1">-7</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -6</col>
+        <col id="1">-6</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -5</col>
+        <col id="1">-5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -4</col>
+        <col id="1">-4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -3</col>
+        <col id="1">-3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -2</col>
+        <col id="1">-2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT -1</col>
+        <col id="1">-1</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">GMT</col>
         <col id="1">0</col>
       </row>
@@ -642,6 +733,38 @@
       <row>
         <col id="0" translatable="yes">GMT +3</col>
         <col id="1">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +4</col>
+        <col id="1">4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +5</col>
+        <col id="1">5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +6</col>
+        <col id="1">6</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +7</col>
+        <col id="1">7</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +8</col>
+        <col id="1">8</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +9</col>
+        <col id="1">9</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +10</col>
+        <col id="1">10</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">GMT +11</col>
+        <col id="1">11</col>
       </row>
     </data>
   </object>

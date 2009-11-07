@@ -12,7 +12,6 @@ def fixhour(a):
     a = a+24.0 if a < 0 else a;
     return a;
 
-
 def getHoursMin(hourdec):
     hour = int(hourdec)
     min = math.ceil((hourdec - hour)*(100)/(10)*(6))
@@ -124,19 +123,21 @@ class Praytime(object):
             strrepr.append("%s: %s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
+
 class PrayerTimesNotifier(object):
-    def __init__(self, location):
+    def __init__(self, location, alert_on):
         self.praytime = Praytime(location)
         self.waitingfor = getNextPrayer(self.praytime)
         prayername = getPreviousPrayerName(self.waitingfor[0])
         self.now = (prayername, getattr(self.praytime, prayername))
         self.waitingfor = self.now
         self.alarm = Alarm()
-        self.__ontime = Event()
+        self._ontime = Event()
+        self.alert_on = alert_on
     
     @property
     def onTime(self):
-        return self.__ontime
+        return self._ontime
     
     def start(self):
         """
@@ -150,7 +151,8 @@ class PrayerTimesNotifier(object):
     
     def _notify(self, *args):
         self.now = self.waitingfor
-        self.__ontime.fire(*args)
+        if self.waitingfor[0] in self.alert_on:
+            self._ontime.fire(*args)
         self.start()
     
     def __str__(self):
