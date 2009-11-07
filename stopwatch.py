@@ -1,6 +1,4 @@
-#import libnotify
 import time
-import threading
 import datetime
 import gobject
 
@@ -23,29 +21,12 @@ def convertToEpoch(timearg):
 
 
 class Alarm():
-    def __init__(self):
-        self.alarms = dict()
 
     def addAlarm(self, timearg, func, *args, **kwargs):
         delta = convertToEpoch(timearg) - time.time()
         if delta < 0:
             delta = 0
         return gobject.timeout_add_seconds(int(delta), func, args, kwargs)
-
-    def getAlarm(self, timearg):
-        if timearg in self.alarms:
-            return self.alarms.pop(timearg)
-        return
-
-    def stopAlarm(self, timearg):
-        timer = self.getAlarm(timearg)
-        if timer:
-            timer.cancel()
-
-    def waitForAlarm(self, timearg):
-        timer = self.getAlarm(timearg)
-        if timer:
-            timer.join()
 
 if __name__ == '__main__':
     def testfunc(a):
