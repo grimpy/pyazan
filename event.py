@@ -7,7 +7,7 @@ class Event(object):
         self.__callbacks.append(callback)
     
     def removeCallback(self, callback):
-        self.__callbacks.remove(value)
+        self.__callbacks.remove(callback)
     
     def fire(self, *args, **kwards):
         for call in self.__callbacks:
