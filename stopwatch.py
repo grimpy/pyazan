@@ -2,7 +2,6 @@ import time
 import datetime
 import gobject
 
-
 def isInSameDay(timearg, refdate):
     return not (refdate.hour > timearg[0] or (refdate.hour == timearg[0] and refdate.minute > timearg[1]))
 

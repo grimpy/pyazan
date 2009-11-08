@@ -1,5 +1,6 @@
 from ConfigParser import ConfigParser
 import os
+from location import Location
 from praytime import PRAYTIMES
 
 class Options(object):
@@ -26,6 +27,21 @@ class Options(object):
         if self.options.has_section("notification"):
             return self.options.getint("notification", "timeout")
         return 0
+
+    def getLocation(self):
+        if self.options.has_section("location"):
+            long = self.options.getfloat("location", "long")
+            lat = self.options.getfloat("location", "lat")
+            timezone = self.options.getint("location", "timezone")
+            name = self.options.get("location", "name")
+            return Location(name, long, lat, timezone)
+        return None
+
+    def setLocation(self, location):
+        self.setValue("location", "name", location.name)
+        self.setValue("location", "long", location.longitude)
+        self.setValue("location", "lat", location.latitude)
+        self.setValue("location", "timezone", location.timezone)
 
     def setNotificationTimeout(self, value):
         self.setValue("notification", "timeout", value)
