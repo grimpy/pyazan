@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <!-- interface-requires gtk+ 2.10 -->
+  <!-- interface-requires gtk+ 2.12 -->
   <!-- interface-naming-policy project-wide -->
   <object class="GtkMenu" id="traymenu">
     <property name="visible">True</property>
@@ -59,10 +59,8 @@
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">15</property>
-                                <property name="label" translatable="yes">Location</property>
-                                <attributes>
-                                  <attribute name="weight" value="semibold"/>
-                                </attributes>
+                                <property name="label" translatable="yes">&lt;b&gt;Location&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="right_attach">2</property>
@@ -73,10 +71,8 @@
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">15</property>
-                                <property name="label" translatable="yes">Time Zone</property>
-                                <attributes>
-                                  <attribute name="weight" value="semibold"/>
-                                </attributes>
+                                <property name="label" translatable="yes">&lt;b&gt;Time Zone&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="right_attach">2</property>
@@ -154,9 +150,6 @@
                                     <property name="model">cmbbox_tz_data</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="Name"/>
-                                      <attributes>
-                                        <attribute name="text">0</attribute>
-                                      </attributes>
                                     </child>
                                   </object>
                                 </child>
@@ -192,6 +185,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                 </child>
                               </object>
@@ -315,10 +309,8 @@
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">15</property>
-                                <property name="label" translatable="yes">Notifications</property>
-                                <attributes>
-                                  <attribute name="weight" value="semibold"/>
-                                </attributes>
+                                <property name="label" translatable="yes">&lt;b&gt;Notifications&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="right_attach">2</property>
@@ -366,10 +358,8 @@
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">15</property>
-                                <property name="label" translatable="yes">Events</property>
-                                <attributes>
-                                  <attribute name="weight" value="semibold"/>
-                                </attributes>
+                                <property name="label" translatable="yes">&lt;b&gt;Events&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="top_attach">5</property>
