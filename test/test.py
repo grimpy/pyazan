@@ -1,9 +1,13 @@
 import praytime
+import datetime
 from location import Location
 
 praytimes = praytime.PRAYTIMES
+NOW = datetime.datetime.now()
+DELTA = datetime.timedelta(minutes=2)
+NOW = NOW - DELTA
 class Praytime(object):
-    starttime = (21,00)
+    starttime = (NOW.hour,NOW.minute)
     counter = 0
     def __init__(self, *args):
         print "Construct", args
@@ -13,6 +17,9 @@ class Praytime(object):
 
     def setDate(self, *args):
         print "SetDate", args
+    
+    def __str__(self):
+        return "This is a test class"
 
 if __name__ == '__main__':
     loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)
