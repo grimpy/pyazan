@@ -123,7 +123,7 @@ class Praytime(object):
             strrepr.append("%s: %s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
-from test.test import Praytime
+#from test.test import Praytime
 
 class PrayerTimesNotifier(object):
     def __init__(self, location, alert_on):
