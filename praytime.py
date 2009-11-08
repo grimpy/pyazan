@@ -63,6 +63,8 @@ class Praytime(object):
     def __init__(self, location=None, day=datetime.datetime.now()):
         self.location = location
         self.day = day
+        for praytime in PRAYTIMES:
+            setattr(self, praytime, (0,0))
     
     def setLocation(self, location):
         if location:
@@ -116,6 +118,8 @@ class Praytime(object):
         return Z
 
     def __str__(self):
+        if not self.location:
+            return "Please configure location!"
         strrepr = []
         for praytime in PRAYTIMES:
             timetuple = getattr(self,praytime)

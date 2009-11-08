@@ -24,7 +24,6 @@ class PyazanGTK(object):
         self.notify = pynotify.Notification("Praying Time")
         
         self.loadOptions()
-        self.status_icon.set_tooltip("%s" % (self.praynotifier))
     
     def showNotify(self, prayer):
         self.notify.update("Time to pray '%s'" % prayer)
@@ -34,9 +33,9 @@ class PyazanGTK(object):
         praynotified = list()
         self.notify.set_timeout(self.options.getNotificationTimeout())
         praynotifies = self.options.getNotifications()
-        #TODO load location
-        location = Location(name="Cairo", longitude=31.25, latitude=30.05, timezone=2)
+        location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
+        self.status_icon.set_tooltip("%s" % (self.praynotifier))
         
     
     def start(self):
