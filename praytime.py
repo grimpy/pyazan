@@ -5,7 +5,7 @@ from angle import *
 from stopwatch import Alarm
 from event import Event
 
-PRAYTIMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
+PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
 def fixhour(a):
     a = a - 24.0 * (math.floor(a / 24.0));
@@ -23,16 +23,16 @@ def getTomorrow():
 
 
 def getNexPrayerName(prayer):
-    nextprayeridx = PRAYTIMES.index(prayer)+1
-    if nextprayeridx > len(PRAYTIMES)-1:
+    nextprayeridx = PRAYER_NAMES.index(prayer)+1
+    if nextprayeridx > len(PRAYER_NAMES)-1:
         nextprayeridx = 0
-    return PRAYTIMES[nextprayeridx]
+    return PRAYER_NAMES[nextprayeridx]
 
 def getPreviousPrayerName(prayer):
-    prevprayerindex = PRAYTIMES.index(prayer)-1
+    prevprayerindex = PRAYER_NAMES.index(prayer)-1
     if prevprayerindex < 0:
-        prevprayerindex = len(PRAYTIMES) -1
-    return PRAYTIMES[prevprayerindex]
+        prevprayerindex = len(PRAYER_NAMES) -1
+    return PRAYER_NAMES[prevprayerindex]
 
 def getNextPrayer(pray_int, prayer=None):
     nextprayer = None
@@ -46,13 +46,13 @@ def getNextPrayer(pray_int, prayer=None):
         prayertime = getattr(pray_int, nextprayer)
         return nextprayer, prayertime
     else:
-        for prayer_name in PRAYTIMES:
+        for prayer_name in PRAYER_NAMES:
             prt = getattr(pray_int, prayer_name)
             if isInSameDay(prt, now):
                 return prayer_name, prt
         pray_int.day = getTomorrow()
-        prayertime = getattr(pray_int, PRAYTIMES[0])
-        return PRAYTIMES[0], prayertime
+        prayertime = getattr(pray_int, PRAYER_NAMES[0])
+        return PRAYER_NAMES[0], prayertime
 
 
 class Praytime(object):
@@ -60,7 +60,7 @@ class Praytime(object):
     _day = None
 
     def __init__(self, location=None, day=datetime.datetime.now()):
-        for praytime in PRAYTIMES:
+        for praytime in PRAYER_NAMES:
             setattr(self, praytime, (0,0))
         self.location = location
         self.day = day
@@ -119,11 +119,12 @@ class Praytime(object):
     def __str__(self):
         if not self.location:
             return "Please configure location!"
-        strrepr = []
-        for praytime in PRAYTIMES:
+        daystring = self.day.strftime("<u>%a %d %B</u>")
+        strrepr = [daystring, ""]
+        for praytime in PRAYER_NAMES:
             timetuple = getattr(self,praytime)
-            timestring = "%d:%02d" % (timetuple[0], timetuple[1])
-            strrepr.append("%s: %s" % (praytime.capitalize(), timestring))
+            timestring = "%02d:%02d" % (timetuple[0], timetuple[1])
+            strrepr.append("%-15s\t%s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
 #from test.test import Praytime

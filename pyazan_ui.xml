@@ -321,10 +321,12 @@
                                 <property name="right_padding">215</property>
                                 <child>
                                   <object class="GtkSpinButton" id="spinbtn_not_timeout">
-                                    <property name="width_request">40</property>
+                                    <property name="width_request">50</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="max_length">3</property>
                                     <property name="invisible_char">&#x25CF;</property>
+                                    <property name="adjustment">adjustment1</property>
                                     <property name="climb_rate">0.01</property>
                                     <property name="numeric">True</property>
                                   </object>
@@ -756,5 +758,10 @@
         <col id="1">11</col>
       </row>
     </data>
+  </object>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
 </interface>

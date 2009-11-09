@@ -9,6 +9,9 @@ class Event(object):
     def removeCallback(self, callback):
         self.__callbacks.remove(callback)
     
+    def hasCallback(self, callback):
+        return callback in self.__callbacks
+    
     def fire(self, *args, **kwargs):
         for call in self.__callbacks:
             try:

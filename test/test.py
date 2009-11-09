@@ -2,9 +2,9 @@ import praytime
 import datetime
 from location import Location
 
-praytimes = praytime.PRAYTIMES
+praytimes = praytime.PRAYER_NAMES
 NOW = datetime.datetime.now()
-DELTA = datetime.timedelta(minutes=2)
+DELTA = datetime.timedelta(minutes=0)
 NOW = NOW - DELTA
 class Praytime(object):
     starttime = (NOW.hour,NOW.minute)

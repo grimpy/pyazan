@@ -1,15 +1,15 @@
 from ConfigParser import ConfigParser
 import os
 from location import Location
-from praytime import PRAYTIMES
+from praytime import PRAYER_NAMES
 
 class Options(object):
     def __init__(self):
-        XDG_HOME = os.environ.get("XDG_HOME")
+        XDG_HOME = os.environ.get("XDG_CONFIG_HOME")
         if not XDG_HOME:
             XDG_HOME = os.path.join(os.environ["HOME"], ".config")
         self.filename = os.path.join(XDG_HOME, "pyazan.cfg")
-        defaults = {"timeout":0, "events": ",".join(PRAYTIMES), "enabled": True}
+        defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "enabled": True, "text":"It's time to pray"}
         self.options = ConfigParser(defaults)
         self.options.read(self.filename)
 
@@ -21,7 +21,7 @@ class Options(object):
     def getNotifications(self):
         if self.options.has_section("notification"):
             return self.options.get("notification", "events").split(",")
-        return PRAYTIMES
+        return PRAYER_NAMES
 
     def getNotificationTimeout(self):
         if self.options.has_section("notification"):
@@ -44,10 +44,18 @@ class Options(object):
         self.setValue("location", "timezone", location.timezone)
 
     def setNotificationTimeout(self, value):
-        self.setValue("notification", "timeout", value)
+        self.setValue("notification", "timeout", int(value))
 
     def setNotifications(self, events):
-        self.setValue("notifications", "events", ",".join(events))
+        self.setValue("notification", "events", ",".join(events))
+    
+    def getNotificationText(self):
+        if self.options.has_section("notification"):
+            return self.options.get("notification", "text")
+        return "It's time to pray"
+    
+    def setNotificationText(self, text):
+        self.setValue("notification", "text", text)
 
     def save(self):
         fd = open(self.filename, "w")
