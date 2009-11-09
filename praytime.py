@@ -36,7 +36,6 @@ def getPreviousPrayerName(prayer):
 
 def getNextPrayer(pray_int, prayer=None):
     nextprayer = None
-    print prayer
     now = datetime.datetime.now()
     if prayer:
         nextprayer = getNexPrayerName(prayer)
@@ -47,10 +46,10 @@ def getNextPrayer(pray_int, prayer=None):
         prayertime = getattr(pray_int, nextprayer)
         return nextprayer, prayertime
     else:
-        for praytime in PRAYTIMES:
-            prt = getattr(pray_int, praytime)
+        for prayer_name in PRAYTIMES:
+            prt = getattr(pray_int, prayer_name)
             if isInSameDay(prt, now):
-                return praytime, prt
+                return prayer_name, prt
         pray_int.day = getTomorrow()
         prayertime = getattr(pray_int, PRAYTIMES[0])
         return PRAYTIMES[0], prayertime
@@ -61,10 +60,10 @@ class Praytime(object):
     _day = None
 
     def __init__(self, location=None, day=datetime.datetime.now()):
-        self.location = location
-        self.day = day
         for praytime in PRAYTIMES:
             setattr(self, praytime, (0,0))
+        self.location = location
+        self.day = day
     
     def setLocation(self, location):
         if location:
@@ -150,7 +149,7 @@ class PrayerTimesNotifier(object):
         """
         if self.waitingfor == self.now:
             self.waitingfor = getNextPrayer(self.praytime, self.now[0])
-            print self.waitingfor
+            print "Adding alarm", self.waitingfor
             self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0])
         return True
     
