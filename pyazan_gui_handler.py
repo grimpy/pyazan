@@ -36,7 +36,7 @@ class PyazanGTK(object):
         praynotifies = self.options.getNotifications()
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
-        self.status_icon.set_tooltip_markup("%s" % (self.praynotifier))
+        self.status_icon.props.tooltip_markup = "%s" % (self.praynotifier)
         self.notifytext = self.options.getNotificationText()
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:

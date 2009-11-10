@@ -124,7 +124,7 @@ class Praytime(object):
         for praytime in PRAYER_NAMES:
             timetuple = getattr(self,praytime)
             timestring = "%02d:%02d" % (timetuple[0], timetuple[1])
-            strrepr.append("%-15s\t%s" % (praytime.capitalize(), timestring))
+            strrepr.append("%-14s\t%s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
 #from test.test import Praytime
