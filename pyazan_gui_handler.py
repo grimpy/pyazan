@@ -32,7 +32,7 @@ class PyazanGTK(object):
 
     def loadOptions(self):
         praynotified = list()
-        self.notify.set_timeout(self.options.getNotificationTimeout())
+        self.notify.set_timeout(self.options.getNotificationTimeout()*1000)
         praynotifies = self.options.getNotifications()
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
@@ -65,7 +65,7 @@ class PyazanGTK(object):
         #set timeout
         notify_timeout = self.ui["spinbtn_not_timeout"].get_value_as_int()
         self.options.setNotificationTimeout(notify_timeout)
-        self.notify.set_timeout(notify_timeout)
+        self.notify.set_timeout(notify_timeout*1000)
         #text
         self.notifytext = self.ui["txt_nt"].get_text()
         self.options.setNotificationText(self.notifytext)
