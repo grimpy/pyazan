@@ -27,7 +27,7 @@ class PyazanGTK(object):
         self.loadOptions()
     
     def showNotify(self, prayer):
-        self.notify.update("%s '%s'" % (self.notifytext, prayer))
+        self.notify.update("%s <b>%s</b>" % (self.notifytext, prayer.capitalize()))
         self.notify.show()
 
     def loadOptions(self):
