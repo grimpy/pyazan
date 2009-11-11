@@ -1,10 +1,16 @@
 import gtk
 import gobject
 import pynotify
+import os
 from praytime import PrayerTimesNotifier
 from praytime import PRAYER_NAMES
 from location import Location
 from options import Options
+
+def getIconPath():
+    #it's a bug here, don't use getcwd because if you started your prgram from 
+    #TODO Azmy is gonna fix
+    return os.path.join(os.getcwd(), 'azan.png')
 
 class PyazanGTK(object):
     def __init__(self):
@@ -26,8 +32,9 @@ class PyazanGTK(object):
         
         self.loadOptions()
     
-    def showNotify(self, prayer):
-        self.notify.update("%s <b>%s</b>" % (self.notifytext, prayer.capitalize()))
+    def showNotify(self, prayer, time):
+        notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
+        self.notify.update("Praying Time", notificationtext, getIconPath())
         self.notify.show()
 
     def loadOptions(self):

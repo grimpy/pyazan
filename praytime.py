@@ -151,7 +151,7 @@ class PrayerTimesNotifier(object):
         if self.waitingfor == self.now:
             self.waitingfor = getNextPrayer(self.praytime, self.now[0])
             print "Adding alarm", self.waitingfor
-            self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0])
+            self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0], self.waitingfor[1])
         return True
     
     def _notify(self, *args):
