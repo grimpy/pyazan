@@ -7,22 +7,21 @@ from praytime import PRAYER_NAMES
 from location import Location
 from options import Options
 
-def getIconPath():
-    #it's a bug here, don't use getcwd because if you started your prgram from 
-    #TODO Azmy is gonna fix
-    return os.path.join(os.getcwd(), 'azan.png')
+def getFullPath(value):
+    basepath = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(basepath, value)
 
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file('azan.png')
+        self.status_icon.set_from_file(getFullPath('azan.png'))
         
         self.options = Options()
         
         self.build = gtk.Builder()
-        self.build.add_from_file("pyazan_ui.xml")
+        self.build.add_from_file(getFullPath("pyazan_ui.xml"))
         
         self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
         self.attachSignals()
@@ -34,7 +33,7 @@ class PyazanGTK(object):
     
     def showNotify(self, prayer, time):
         notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
-        self.notify.update("Praying Time", notificationtext, getIconPath())
+        self.notify.update("Praying Time", notificationtext, getFullPath("azan.png"))
         self.notify.show()
 
     def loadOptions(self):
