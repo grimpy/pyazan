@@ -1,4 +1,4 @@
-Atm the preferences window doesnt really work but the config file kindda does
+Notifications are fully functional
 Configfile is located at ~/.config/pyazan.cfg
 
 You can configure the location via the setlocation.py script
