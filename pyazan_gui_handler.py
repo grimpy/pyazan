@@ -42,7 +42,7 @@ class PyazanGTK(object):
         currentindex = PRAYER_NAMES.index(prayer)+2
         tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
         nicetime = str(getTimeDiff(self.praynotifier.waitingfor[1])).split(":")[0:2]
-        tooltiplist.append("\nTime between next prayer %s" % ":".join(nicetime))
+        tooltiplist.append("\nTime until next prayer %s" % ":".join(nicetime))
         self.status_icon.props.tooltip_markup = "\n".join(tooltiplist)
 
     def loadOptions(self):
