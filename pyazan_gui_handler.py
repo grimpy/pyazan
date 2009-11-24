@@ -6,16 +6,33 @@ from praytime import PrayerTimesNotifier
 from praytime import PRAYER_NAMES
 from location import Location
 from options import Options
+import time
 
 def getFullPath(value):
     basepath = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(basepath, value)
 
+class MyProps(gtk):
+    pass
+
+class MyStatusIcon(gtk.StatusIcon):
+    def __init__(self, *args):
+        gtk.StatusIcon.__init__(self, *args)
+        self.props.
+    
+    def get_property(self, arg):
+        print arg
+        if arg in ["tooltip_markup", "tooltip_markup"]:
+            return str(time.time())
+        return gtk.StatusIcon.get_property(self, arg)
+    
+    def 
+
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
         
-        self.status_icon = gtk.StatusIcon()
+        self.status_icon = MyStatusIcon()
         self.status_icon.set_from_file(getFullPath('azan.png'))
         
         self.options = Options()
@@ -42,7 +59,7 @@ class PyazanGTK(object):
         praynotifies = self.options.getNotifications()
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
-        self.status_icon.props.tooltip_markup = "%s" % (self.praynotifier)
+        self.status_icon.props.tooltip_markup = self.praynotifier
         self.notifytext = self.options.getNotificationText()
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:
