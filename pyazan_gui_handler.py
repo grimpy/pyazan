@@ -6,6 +6,7 @@ from praytime import PrayerTimesNotifier
 from praytime import PRAYER_NAMES
 from location import Location
 from options import Options
+from stopwatch import getTimeDiff
 
 def getFullPath(value):
     basepath = os.path.dirname(os.path.abspath(__file__))
@@ -28,8 +29,8 @@ class PyazanGTK(object):
         
         pynotify.init('pyazan')
         self.notify = pynotify.Notification("Praying Time")
-        
         self.loadOptions()
+        gobject.timeout_add_seconds(60, self.updateToolTip, *self.praynotifier.now)
     
     def showNotify(self, prayer, time):
         notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
@@ -40,6 +41,8 @@ class PyazanGTK(object):
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
         tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
+        nicetime = str(getTimeDiff(self.praynotifier.waitingfor[1])).split(":")[0:2]
+        tooltiplist.append("\nTime between next prayer %s" % ":".join(nicetime))
         self.status_icon.props.tooltip_markup = "\n".join(tooltiplist)
 
     def loadOptions(self):
@@ -49,7 +52,6 @@ class PyazanGTK(object):
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
         self.updateToolTip(*self.praynotifier.now)
-        self.praynotifier.onTime.addCallback(self.updateToolTip)
         self.notifytext = self.options.getNotificationText()
 
         #set notify times in preference menu

@@ -18,6 +18,9 @@ def convertToEpoch(timearg):
     elif isinstance(timearg, datetime.datetime):
         return int(timearg.strftime("%s"))
 
+def getTimeDiff(timearg):
+    then = datetime.datetime.fromtimestamp(convertToEpoch(timearg))
+    return then - datetime.datetime.now()
 
 class Alarm():
 

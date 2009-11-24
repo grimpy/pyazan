@@ -135,7 +135,7 @@ class PrayerTimesNotifier(object):
         self.waitingfor = getNextPrayer(self.praytime)
         prayername = getPreviousPrayerName(self.waitingfor[0])
         self.now = (prayername, getattr(self.praytime, prayername))
-        self.waitingfor = self.now
+        self.running = False
         self.alarm = Alarm()
         self._ontime = Event()
         self.alert_on = alert_on
@@ -148,10 +148,11 @@ class PrayerTimesNotifier(object):
         """
         Start notifying on prayers times
         """
-        if self.waitingfor == self.now:
+        if self.waitingfor == self.now or not self.running:
             self.waitingfor = getNextPrayer(self.praytime, self.now[0])
             print "Adding alarm", self.waitingfor
             self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0], self.waitingfor[1])
+        self.running = True
         return True
     
     def _notify(self, *args):
