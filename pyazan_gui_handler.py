@@ -12,8 +12,9 @@ def getFullPath(value):
     basepath = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(basepath, value)
 
-class MyProps(gtk):
-    pass
+class MyProps(gobject.GProps):
+    def __init__(self, *args, **kwargs):
+        gobject.GProps.__init__(self, *args, **kwargs)
 
 class MyStatusIcon(gtk.StatusIcon):
     def __init__(self, *args):
