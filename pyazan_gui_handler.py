@@ -17,7 +17,7 @@ class PyazanGTK(object):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file(getFullPath('azan.png'))
+        self.status_icon.set_from_file(getFullPath('mosque.png'))
         
         self.options = Options()
         
@@ -40,10 +40,14 @@ class PyazanGTK(object):
     def updateToolTip(self, prayer, time):
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
-        tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
+        if len(tooltiplist) > currentindex:
+            tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
         nicetime = str(getTimeDiff(self.praynotifier.waitingfor[1])).split(":")[0:2]
         tooltiplist.append("\nTime until next prayer %s" % ":".join(nicetime))
-        self.status_icon.props.tooltip_markup = "\n".join(tooltiplist)
+        if hasattr(self.status_icon.props, 'tooltip_markup'):
+            self.status_icon.props.tooltip_markup = "\n".join(tooltiplist)
+        else:
+            self.status_icon.set_tooltip("\n".join(tooltiplist))
 
     def loadOptions(self):
         praynotified = list()
