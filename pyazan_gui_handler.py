@@ -30,14 +30,15 @@ class PyazanGTK(object):
         pynotify.init('pyazan')
         self.notify = pynotify.Notification("Praying Time")
         self.loadOptions()
-        gobject.timeout_add_seconds(60, self.updateToolTip, *self.praynotifier.now)
+        gobject.timeout_add_seconds(60, self.updateToolTip)
     
     def showNotify(self, prayer, time):
         notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
         self.notify.update("Praying Time", notificationtext, getFullPath("azan.png"))
         self.notify.show()
 
-    def updateToolTip(self, prayer, time):
+    def updateToolTip(self):
+        prayer, time = self.praynotifier.now
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
         if len(tooltiplist) > currentindex:
@@ -48,6 +49,7 @@ class PyazanGTK(object):
             self.status_icon.props.tooltip_markup = "\n".join(tooltiplist)
         else:
             self.status_icon.set_tooltip("\n".join(tooltiplist))
+        return True
 
     def loadOptions(self):
         praynotified = list()
@@ -55,7 +57,7 @@ class PyazanGTK(object):
         praynotifies = self.options.getNotifications()
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
-        self.updateToolTip(*self.praynotifier.now)
+        self.updateToolTip()
         self.notifytext = self.options.getNotificationText()
 
         #set notify times in preference menu
