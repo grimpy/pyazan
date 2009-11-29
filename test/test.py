@@ -13,7 +13,7 @@ class Praytime(object):
         print "Construct", args
         for prayer in praytimes:
             setattr(self, prayer, (self.starttime[0],self.starttime[1]+Praytime.counter))
-            Praytime.counter+=1
+            Praytime.counter+=2
 
     def setDate(self, *args):
         print "SetDate", args

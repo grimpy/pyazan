@@ -3,11 +3,15 @@ import os
 from location import Location
 from praytime import PRAYER_NAMES
 
+def getFullPath(value):
+    basepath = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(basepath, value)
+
 class Options(object):
     def __init__(self):
         XDG_HOME = os.environ.get("XDG_CONFIG_HOME")
         if not XDG_HOME:
-            XDG_HOME = os.path.join(os.environ["HOME"], ".config")
+            XDG_HOME = os.path.expanduser(os.path.join("~", ".config"))
         self.filename = os.path.join(XDG_HOME, "pyazan.cfg")
         defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "enabled": True, "text":"It's time to pray"}
         self.options = ConfigParser(defaults)
@@ -37,6 +41,14 @@ class Options(object):
             return Location(name, long, lat, timezone)
         return None
 
+    def getOption(self, section, value, default, boolean=False):
+        if self.options.has_section(section):
+            if boolean:
+                return self.options.getboolean(section, value)
+            else:
+                return self.options.get(section, value)
+        return default
+
     def setLocation(self, location):
         self.setValue("location", "name", location.name)
         self.setValue("location", "long", location.longitude)
@@ -50,9 +62,7 @@ class Options(object):
         self.setValue("notification", "events", ",".join(events))
     
     def getNotificationText(self):
-        if self.options.has_section("notification"):
-            return self.options.get("notification", "text")
-        return "It's time to pray"
+        return self.getOption("notification", "text", "It's time to pray")
     
     def setNotificationText(self, text):
         self.setValue("notification", "text", text)
@@ -61,11 +71,17 @@ class Options(object):
         fd = open(self.filename, "w")
         self.options.write(fd)
 
+    def getAzanFile(self):
+        return self.getOption("sound", "file", getFullPath("azan.mp3"))
+
     def enableNotifications(self, flag):
         self.setValue("notification", "enabled", flag)
 
+    def isSoundEnabled(self):
+        return self.getOption("sound", "enabled", True, False)
+
+    def enableSound(self, flag):
+        self.setValue("sound", "enabled", flag)
+
     def isNotificationEnabled(self):
-        if self.options.has_section("notification"):
-            return self.options.getboolean("notification", "enabled")
-        else:
-            return True
+        return self.getOption("notification", "enabled", True, True)

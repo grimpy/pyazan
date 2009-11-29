@@ -5,12 +5,9 @@ import os
 from praytime import PrayerTimesNotifier
 from praytime import PRAYER_NAMES
 from location import Location
-from options import Options
+from options import Options, getFullPath
 from stopwatch import getTimeDiff
-
-def getFullPath(value):
-    basepath = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(basepath, value)
+from audiohandler import AudioHandler
 
 class PyazanGTK(object):
     def __init__(self):
@@ -59,6 +56,7 @@ class PyazanGTK(object):
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
         self.updateToolTip()
         self.notifytext = self.options.getNotificationText()
+        self.audiohandler = AudioHandler(self.options.getAzanFile())
 
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:
@@ -101,6 +99,8 @@ class PyazanGTK(object):
     def start(self):
         if self.options.isNotificationEnabled():
             self.praynotifier.onTime.addCallback(self.showNotify)
+        if self.options.isSoundEnabled():
+            self.praynotifier.onTime.addCallback(self.audiohandler.play)
         self.praynotifier.start()
         self.mainloop.run()
 
