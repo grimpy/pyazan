@@ -766,7 +766,7 @@
   </object>
   <object class="GtkImage" id="img_pref">
     <property name="visible">True</property>
-    <property name="stock">gtk-quit</property>
+    <property name="stock">gtk-preferences</property>
     <property name="icon-size">1</property>
   </object>
   <object class="GtkImage" id="img_quit">
