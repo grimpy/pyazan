@@ -2,24 +2,22 @@ import gtk
 import gobject
 import pynotify
 import os
-from praytime import PrayerTimesNotifier
-from praytime import PRAYER_NAMES
+from praytime import PrayerTimesNotifier, PRAYER_NAMES
 from location import Location
 from options import Options, getFullPath
 from stopwatch import getTimeDiff
-from audiohandler import AudioHandler
 
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file(getFullPath('mosque.png'))
+        self.status_icon.set_from_file(getFullPath('../data/mosque.png'))
         
         self.options = Options()
         
         self.build = gtk.Builder()
-        self.build.add_from_file(getFullPath("pyazan_ui.xml"))
+        self.build.add_from_file(getFullPath("../ui/pyazan_ui.xml"))
         
         self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
         self.attachSignals()
@@ -27,6 +25,8 @@ class PyazanGTK(object):
         pynotify.init('pyazan')
         self.notify = pynotify.Notification("Praying Time")
         self.loadOptions()
+        self.plugins = {"audiohandler": None}
+        self.loadPlugins()
         gobject.timeout_add_seconds(60, self.updateToolTip)
     
     def showNotify(self, prayer, time):
@@ -56,7 +56,6 @@ class PyazanGTK(object):
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
         self.updateToolTip()
         self.notifytext = self.options.getNotificationText()
-        self.audiohandler = AudioHandler(self.options.getAzanFile())
 
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:
@@ -99,10 +98,30 @@ class PyazanGTK(object):
     def start(self):
         if self.options.isNotificationEnabled():
             self.praynotifier.onTime.addCallback(self.showNotify)
-        if self.options.isSoundEnabled():
-            self.praynotifier.onTime.addCallback(self.audiohandler.play)
         self.praynotifier.start()
         self.mainloop.run()
+
+    def loadPlugins(self):
+        for plugin_name in self.plugins.keys():
+            self.enablePlugin(plugin_name)
+
+    def enablePlugin(self, plugin_name):
+        if not self.plugins[plugin_name]:
+            try:
+                fromlist = [plugin_name]
+                self.plugins[plugin_name] = __import__("pyazan.plugins.%s" % plugin_name, fromlist=fromlist)
+            except ImportError:
+                print "Failed to import plugin %s" % plugin_name
+                return False
+        try:
+            self.plugins[plugin_name].load(self)
+            return True
+        except Exception, e:
+            print "Failed to load plugin %s: %s" % (plugin_name, e)
+
+    def disablePlugin(self, plugin_name):
+        if self.plugins.get(plugin_name):
+            self.plugins[plugin_name].unload()
 
 
     def attachSignals(self):
