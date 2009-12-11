@@ -1,45 +1,37 @@
 import gtk
 import gobject
-import pynotify
 import os
-from praytime import PrayerTimesNotifier
-from praytime import PRAYER_NAMES
+from praytime import PrayerTimesNotifier, PRAYER_NAMES
 from location import Location
 from options import Options, getFullPath
 from stopwatch import getTimeDiff
-from audiohandler import AudioHandler
 
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file(getFullPath('mosque.png'))
+        self.status_icon.set_from_file(getFullPath('../data/trayicon.gif'))
         
         self.options = Options()
         
         self.build = gtk.Builder()
-        self.build.add_from_file(getFullPath("pyazan_ui.xml"))
+        self.build.add_from_file(getFullPath("../ui/pyazan_ui.xml"))
         
         self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
         self.attachSignals()
         
-        pynotify.init('pyazan')
-        self.notify = pynotify.Notification("Praying Time")
         self.loadOptions()
+        self.loadPlugins()
         gobject.timeout_add_seconds(60, self.updateToolTip)
     
-    def showNotify(self, prayer, time):
-        notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
-        self.notify.update("Praying Time", notificationtext, getFullPath("azan.png"))
-        self.notify.show()
 
     def updateToolTip(self):
         prayer, time = self.praynotifier.now
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
         if len(tooltiplist) > currentindex:
-            tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
+            tooltiplist[currentindex] = "<u>%s</u>" % tooltiplist[currentindex]
         nicetime = str(getTimeDiff(self.praynotifier.waitingfor[1])).split(":")[0:2]
         tooltiplist.append("\nTime until next prayer %s" % ":".join(nicetime))
         if hasattr(self.status_icon.props, 'tooltip_markup'):
@@ -50,21 +42,15 @@ class PyazanGTK(object):
 
     def loadOptions(self):
         praynotified = list()
-        self.notify.set_timeout(self.options.getNotificationTimeout()*1000)
         praynotifies = self.options.getNotifications()
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
         self.updateToolTip()
-        self.notifytext = self.options.getNotificationText()
-        self.audiohandler = AudioHandler(self.options.getAzanFile())
 
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:
             enabled = prayer_name in praynotifies
             self.ui["chkbnt_%s" % prayer_name].set_active(enabled)
-        self.ui["txt_nt"].set_text(self.notifytext)
-        self.ui["chkbtn_enablenot"].set_active(self.options.isNotificationEnabled())
-        self.ui["spinbtn_not_timeout"].set_value(self.options.getNotificationTimeout())
 
     def applyConfig(self, *args):
         #set prayer events
@@ -97,12 +83,44 @@ class PyazanGTK(object):
         self.closeOptionsWindow(*args)
     
     def start(self):
-        if self.options.isNotificationEnabled():
-            self.praynotifier.onTime.addCallback(self.showNotify)
-        if self.options.isSoundEnabled():
-            self.praynotifier.onTime.addCallback(self.audiohandler.play)
         self.praynotifier.start()
         self.mainloop.run()
+
+    def loadPlugins(self):
+        self.plugins = dict((name, list()) for name in self.getPluginList())
+        for plugin_name in self.plugins.keys():
+            self.enablePlugin(plugin_name)
+
+    def getPluginList(self):
+        plugindir = getFullPath("plugins")
+        for file in os.listdir(plugindir):
+            if os.path.isdir(os.path.join(plugindir, file)):
+                yield file
+
+    def enablePlugin(self, plugin_name):
+        if not self.plugins[plugin_name]:
+            try:
+                fromlist = [plugin_name]
+                classes = getattr(__import__("pyazan.plugins", fromlist=fromlist), plugin_name)
+                for klass in dir(classes):
+                    attrib = getattr(classes, klass)
+                    if hasattr(attrib, "mro"):
+                        self.plugins[plugin_name].append(attrib()) 
+            except Exception, e:
+                print "Failed to import plugin %s: %s" % (plugin_name, e)
+                return False
+        try:
+            for pl in self.plugins[plugin_name]:
+                print pl
+                pl.load(self)
+            return True
+        except Exception, e:
+            print "Failed to load plugin %s: %s" % (plugin_name, e)
+
+    def disablePlugin(self, plugin_name):
+        if self.plugins.get(plugin_name):
+            for pl in self.plugins[plugin_name]:
+                pl.unload()
 
 
     def attachSignals(self):

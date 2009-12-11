@@ -1,8 +1,10 @@
-import praytime
+#from pyazan import praytime, location
 import datetime
-from location import Location
+#Location = location.Location
 
-praytimes = praytime.PRAYER_NAMES
+PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
+
+praytimes = PRAYER_NAMES
 NOW = datetime.datetime.now()
 DELTA = datetime.timedelta(minutes=0)
 NOW = NOW - DELTA
@@ -13,7 +15,7 @@ class Praytime(object):
         print "Construct", args
         for prayer in praytimes:
             setattr(self, prayer, (self.starttime[0],self.starttime[1]+Praytime.counter))
-            Praytime.counter+=2
+            Praytime.counter+=1
 
     def setDate(self, *args):
         print "SetDate", args

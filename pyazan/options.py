@@ -71,17 +71,8 @@ class Options(object):
         fd = open(self.filename, "w")
         self.options.write(fd)
 
-    def getAzanFile(self):
-        return self.getOption("sound", "file", getFullPath("azan.mp3"))
-
     def enableNotifications(self, flag):
         self.setValue("notification", "enabled", flag)
-
-    def isSoundEnabled(self):
-        return self.getOption("sound", "enabled", True, False)
-
-    def enableSound(self, flag):
-        self.setValue("sound", "enabled", flag)
 
     def isNotificationEnabled(self):
         return self.getOption("notification", "enabled", True, True)
