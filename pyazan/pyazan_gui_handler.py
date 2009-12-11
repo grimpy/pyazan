@@ -11,7 +11,7 @@ class PyazanGTK(object):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file(getFullPath('../data/mosque.png'))
+        self.status_icon.set_from_file(getFullPath('../data/trayicon.gif'))
         
         self.options = Options()
         
@@ -103,7 +103,6 @@ class PyazanGTK(object):
                 fromlist = [plugin_name]
                 classes = getattr(__import__("pyazan.plugins", fromlist=fromlist), plugin_name)
                 for klass in dir(classes):
-                    import pdb; pdb.set_trace()
                     attrib = getattr(classes, klass)
                     if hasattr(attrib, "mro"):
                         self.plugins[plugin_name].append(attrib()) 
