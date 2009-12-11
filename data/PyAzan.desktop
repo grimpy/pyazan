@@ -6,6 +6,6 @@ Name=PyAzan
 Comment=
 Categories=Application;
 Exec=pyazangtk
-Icon=pyazan
+Icon=pyazan_icon
 Terminal=false
 StartupNotify=false
