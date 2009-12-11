@@ -31,7 +31,7 @@ class PyazanGTK(object):
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
         if len(tooltiplist) > currentindex:
-            tooltiplist[currentindex] = "<b>%s</b>" % tooltiplist[currentindex]
+            tooltiplist[currentindex] = "<u>%s</u>" % tooltiplist[currentindex]
         nicetime = str(getTimeDiff(self.praynotifier.waitingfor[1])).split(":")[0:2]
         tooltiplist.append("\nTime until next prayer %s" % ":".join(nicetime))
         if hasattr(self.status_icon.props, 'tooltip_markup'):
@@ -87,7 +87,7 @@ class PyazanGTK(object):
         self.mainloop.run()
 
     def loadPlugins(self):
-        self.plugins = dict((name, None) for name in self.getPluginList())
+        self.plugins = dict((name, list()) for name in self.getPluginList())
         for plugin_name in self.plugins.keys():
             self.enablePlugin(plugin_name)
 
@@ -100,20 +100,28 @@ class PyazanGTK(object):
     def enablePlugin(self, plugin_name):
         if not self.plugins[plugin_name]:
             try:
-                fromlist = ["main"]
-                self.plugins[plugin_name] = getattr(__import__("pyazan.plugins.%s" % plugin_name, fromlist=fromlist), "main").Plugin()
+                fromlist = [plugin_name]
+                classes = getattr(__import__("pyazan.plugins", fromlist=fromlist), plugin_name)
+                for klass in dir(classes):
+                    import pdb; pdb.set_trace()
+                    attrib = getattr(classes, klass)
+                    if hasattr(attrib, "mro"):
+                        self.plugins[plugin_name].append(attrib()) 
             except Exception, e:
                 print "Failed to import plugin %s: %s" % (plugin_name, e)
                 return False
         try:
-            self.plugins[plugin_name].load(self)
+            for pl in self.plugins[plugin_name]:
+                print pl
+                pl.load(self)
             return True
         except Exception, e:
             print "Failed to load plugin %s: %s" % (plugin_name, e)
 
     def disablePlugin(self, plugin_name):
         if self.plugins.get(plugin_name):
-            self.plugins[plugin_name].unload()
+            for pl in self.plugins[plugin_name]:
+                pl.unload()
 
 
     def attachSignals(self):
