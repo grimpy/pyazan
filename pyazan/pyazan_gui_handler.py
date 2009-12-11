@@ -3,7 +3,8 @@ import gobject
 import os
 from praytime import PrayerTimesNotifier, PRAYER_NAMES
 from location import Location
-from options import Options, getFullPath
+from options import Options
+from paths import *
 from stopwatch import getTimeDiff
 
 class PyazanGTK(object):
@@ -11,12 +12,12 @@ class PyazanGTK(object):
         self.mainloop = gobject.MainLoop()
         
         self.status_icon = gtk.StatusIcon()
-        self.status_icon.set_from_file(getFullPath('../data/trayicon.gif'))
+        self.status_icon.set_from_file(TRAYICON)
         
         self.options = Options()
         
         self.build = gtk.Builder()
-        self.build.add_from_file(getFullPath("../ui/pyazan_ui.xml"))
+        self.build.add_from_file(os.path.join(XML, 'pyazan_ui.xml'))
         
         self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
         self.attachSignals()

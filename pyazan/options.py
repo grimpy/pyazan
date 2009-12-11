@@ -1,18 +1,12 @@
 from ConfigParser import ConfigParser
+import paths
 import os
 from location import Location
 from praytime import PRAYER_NAMES
 
-def getFullPath(value):
-    basepath = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(basepath, value)
-
 class Options(object):
     def __init__(self):
-        XDG_HOME = os.environ.get("XDG_CONFIG_HOME")
-        if not XDG_HOME:
-            XDG_HOME = os.path.expanduser(os.path.join("~", ".config"))
-        self.filename = os.path.join(XDG_HOME, "pyazan.cfg")
+        self.filename = paths.CONFIGPATH
         defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "enabled": True, "text":"It's time to pray"}
         self.options = ConfigParser(defaults)
         self.options.read(self.filename)

@@ -127,6 +127,8 @@ class Praytime(object):
             strrepr.append("%-14s\t%s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
+#from test.test import Praytime
+
 class PrayerTimesNotifier(object):
     def __init__(self, location, alert_on):
         self.praytime = Praytime(location)

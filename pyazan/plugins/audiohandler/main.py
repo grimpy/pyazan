@@ -1,5 +1,6 @@
 import gst
-from pyazan.options import getFullPath
+from pyazan.paths import SOUND
+import os
 from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):
@@ -18,7 +19,7 @@ class Plugin(plugin.Plugin):
         self.pyazangui.praynotifier.onTime.addCallback(self.play)
 
     def getAzanFile(self):
-        return self.pyazangui.options.getOption("sound", "file", getFullPath("../data/azan.mp3"))
+        return self.pyazangui.options.getOption("sound", "file", os.path.join(SOUND, "azan.mp3"))
 
     def unload():
         self.pyazangui.praynotifier.onTime.removeCallback(self.play)
