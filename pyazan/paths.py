@@ -22,4 +22,4 @@ XDG_HOME = os.environ.get("XDG_CONFIG_HOME")
 if not XDG_HOME:
     XDG_HOME = os.path.expanduser(os.path.join("~", ".config"))
 CONFIGPATH = os.path.join(XDG_HOME, "pyazan.cfg")
-TRAYICON=os.path.join(PIXMAPS, "trayicon.gif")
+TRAYICON=PIXMAPS+"_icon.png"
