@@ -15,6 +15,11 @@ def fixhour(a):
 def getHoursMin(hourdec):
     hour = int(hourdec)
     min = math.ceil((hourdec - hour)*(100)/(10)*(6))
+    if min == 60:
+        hour+=1
+        min = 0
+    if hour == 24:
+        hour = 0
     return (hour, int(min))
 
 def getTomorrow():
