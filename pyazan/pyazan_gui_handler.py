@@ -10,22 +10,22 @@ from stopwatch import getTimeDiff
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
-        
+
         self.status_icon = gtk.StatusIcon()
         self.status_icon.set_from_file(TRAYICON)
-        
+
         self.options = Options()
-        
+
         self.build = gtk.Builder()
         self.build.add_from_file(os.path.join(XML, 'pyazan_ui.xml'))
-        
+
         self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
         self.attachSignals()
-        
+
         self.loadOptions()
         self.loadPlugins()
         gobject.timeout_add_seconds(60, self.updateToolTip)
-    
+
 
     def updateToolTip(self):
         prayer, time = self.praynotifier.now
@@ -61,28 +61,23 @@ class PyazanGTK(object):
                 pray_names_to_notify.append(prayer_name)
         self.options.setNotifications(pray_names_to_notify)
         self.praynotifier.alert_on = pray_names_to_notify
-        #enable/disable notifications
-        notification_enabled = self.ui["chkbtn_enablenot"].get_active()
-        isenabled = self.praynotifier.onTime.hasCallback(self.showNotify)
-        if isenabled and not notification_enabled:
-            self.praynotifier.onTime.removeCallback(self.showNotify)
-        elif not isenabled and notification_enabled:
-            self.praynotifier.onTime.addCallback(self.showNotify)
-        self.options.enableNotifications(notification_enabled)
-        #set timeout
-        notify_timeout = self.ui["spinbtn_not_timeout"].get_value_as_int()
-        self.options.setNotificationTimeout(notify_timeout)
-        self.notify.set_timeout(notify_timeout*1000)
-        #text
-        self.notifytext = self.ui["txt_nt"].get_text()
-        self.options.setNotificationText(self.notifytext)
-        
+        #save enabled plugins
+        index = 0
+        enabled_plugins = list()
+        model = self.ui["liststore_plugins"]
+        for index in xrange(model.iter_n_children(None)):
+            iter = model.iter_nth_child(None, index)
+            plugin_name = model.get_value(iter, 1)
+            enabled = model.get_value(iter, 0)
+            if enabled:
+                enabled_plugins.append(plugin_name)
+        self.options.setEnabledPlugins(enabled_plugins)
         self.options.save()
-    
+
     def settingsOk(self, *args):
         self.applyConfig(*args)
         self.closeOptionsWindow(*args)
-    
+
     def start(self):
         self.praynotifier.start()
         self.mainloop.run()
@@ -90,7 +85,8 @@ class PyazanGTK(object):
     def loadPlugins(self):
         self.plugins = dict((name, list()) for name in self.getPluginList())
         for plugin_name in self.plugins.keys():
-            self.enablePlugin(plugin_name)
+            if plugin_name in self.options.getEnabledPlugins():
+                self.enablePlugin(plugin_name)
 
     def getPluginList(self):
         plugindir = getFullPath("plugins")
@@ -106,7 +102,7 @@ class PyazanGTK(object):
                 for klass in dir(classes):
                     attrib = getattr(classes, klass)
                     if hasattr(attrib, "mro"):
-                        self.plugins[plugin_name].append(attrib()) 
+                        self.plugins[plugin_name].append(attrib())
             except Exception, e:
                 print "Failed to import plugin %s: %s" % (plugin_name, e)
                 return False
@@ -131,7 +127,7 @@ class PyazanGTK(object):
         self.ui["btn_pref_cancel"].connect("released", self.closeOptionsWindow)
         self.ui["btn_pref_apply"].connect("released", self.applyConfig)
         self.ui["btn_pref_ok"].connect("released", self.settingsOk)
-        
+
         self.status_icon.connect("popup-menu", self.showStatusIconPopup)
 
     def quit(self, *args):
@@ -140,8 +136,36 @@ class PyazanGTK(object):
     def closeOptionsWindow(self, *args):
         self.ui["pref_window"].hide()
 
+    def pluginChanged(self, cell, position, model):
+        iter = model.get_iter((int(position),))
+        value = not cell.get_active()
+        if iter:
+            plugin_name = model.get_value(iter, 1)
+            if value:
+                self.enablePlugin(plugin_name)
+            else:
+                self.disablePlugin(plugin_name)
+        model.set_value(iter, 0, value)
+
     def showOptionsWindow(self, *args):
         self.ui["pref_window"].show()
+        model = self.ui["plugin_tree"].get_model()
+        # column for enable/disable
+        renderer = gtk.CellRendererToggle()
+        renderer.connect('toggled', self.pluginChanged, model)
+        column = gtk.TreeViewColumn('Enabled', renderer, active=0)
+        # set this column to a fixed sizing(of 50 pixels)
+        column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        column.set_fixed_width(50)
+        self.ui["plugin_tree"].append_column(column)
+        #append name collum
+        renderer = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Name', renderer, text=1)
+        self.ui["plugin_tree"].append_column(column)
+        for k, v in self.plugins.iteritems():
+            iter = model.append()
+            enabled = k in self.options.getEnabledPlugins()
+            model.set(iter, 0, enabled, 1, k)
 
     def showStatusIconPopup(self, icon, button ,timeout):
         self.ui["traymenu"].popup(None, None, None, button, timeout)

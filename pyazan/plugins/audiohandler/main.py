@@ -21,6 +21,6 @@ class Plugin(plugin.Plugin):
     def getAzanFile(self):
         return self.pyazangui.options.getOption("sound", "file", os.path.join(SOUND, "azan.mp3"))
 
-    def unload():
+    def unload(self):
         self.pyazangui.praynotifier.onTime.removeCallback(self.play)
 

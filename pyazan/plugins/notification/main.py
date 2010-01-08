@@ -14,7 +14,7 @@ class Plugin(plugin.Plugin):
         self.pyazangui.praynotifier.onTime.addCallback(self.showNotify)
 
     def unload(self):
-        self.pyazangui.praynotifier.onTime.addCallback(self.showNotify)
+        self.pyazangui.praynotifier.onTime.removeCallback(self.showNotify)
 
     def showNotify(self, prayer, time):
         print "Something went wrong"

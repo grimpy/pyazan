@@ -21,6 +21,19 @@ class Options(object):
             return self.options.get("notification", "events").split(",")
         return PRAYER_NAMES
 
+    def getEnabledPlugins(self):
+        if self.options.has_section("main"):
+            return self.options.get("main", "plugins").split(",")
+        return list()
+
+    def setEnabledPlugins(self, plugins):
+        self.setValue("main", "plugins", ",".join(plugins))
+
+    def enablePlugin(self, name):
+        pl = set(self.getEnabledPlugins())
+        pl.add(name)
+        self.setEnabledPlugins(pl)
+
     def getNotificationTimeout(self):
         if self.options.has_section("notification"):
             return self.options.getint("notification", "timeout")
@@ -54,10 +67,10 @@ class Options(object):
 
     def setNotifications(self, events):
         self.setValue("notification", "events", ",".join(events))
-    
+
     def getNotificationText(self):
         return self.getOption("notification", "text", "It's time to pray")
-    
+
     def setNotificationText(self, text):
         self.setValue("notification", "text", text)
 
