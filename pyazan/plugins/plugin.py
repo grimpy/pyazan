@@ -7,3 +7,9 @@ class Plugin(object):
 
     def unload(self, *args):
         raise NotImplementedError
+
+    def getDescription(self):
+        return "No description"
+
+    def getUiWidget(self):
+        return None

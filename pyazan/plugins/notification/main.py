@@ -17,7 +17,8 @@ class Plugin(plugin.Plugin):
         self.pyazangui.praynotifier.onTime.removeCallback(self.showNotify)
 
     def showNotify(self, prayer, time):
-        print "Something went wrong"
         notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
         self.notify.update("Praying Time", notificationtext, ICON)
-        self.notify.show()
+
+    def getDescription(self):
+        return "Show notifcation via libnotify"

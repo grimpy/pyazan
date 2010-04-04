@@ -5,23 +5,38 @@ import datetime
 PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
 praytimes = PRAYER_NAMES
-NOW = datetime.datetime.now()
-DELTA = datetime.timedelta(minutes=0)
-NOW = NOW - DELTA
+
 class Praytime(object):
-    starttime = (NOW.hour,NOW.minute)
-    counter = 0
+    BEGIN = datetime.datetime.now()
+    DELTA = datetime.timedelta(minutes=1)
+
     def __init__(self, *args):
         print "Construct", args
+        self.setPrayers()
+
+    def setPrayers(self):
+        cnt = 0
         for prayer in praytimes:
-            setattr(self, prayer, (self.starttime[0],self.starttime[1]+Praytime.counter))
-            Praytime.counter+=1
+            ntime = Praytime.BEGIN + Praytime.DELTA
+            ptime = (ntime.hour,ntime.minute)
+            setattr(self, prayer, ptime)
+            if cnt % 1 == 0:
+                Praytime.DELTA+=datetime.timedelta(minutes=1)
+            cnt+=1
 
     def setDate(self, *args):
         print "SetDate", args
-    
+        self.setPrayers()
+
+    day = property(fset=setDate)
+
     def __str__(self):
-        return "This is a test class"
+        strrepr = list()
+        for praytime in PRAYER_NAMES:
+            timetuple = getattr(self,praytime)
+            timestring = "%02d:%02d" % (timetuple[0], timetuple[1])
+            strrepr.append("%-14s\t%s" % (praytime.capitalize(), timestring))
+        return "\n".join(strrepr)
 
 if __name__ == '__main__':
     loc = Location(name="Belguim", longitude=3.72, latitude=51.053, timezone=2)

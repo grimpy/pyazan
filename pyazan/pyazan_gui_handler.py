@@ -102,22 +102,20 @@ class PyazanGTK(object):
                 for klass in dir(classes):
                     attrib = getattr(classes, klass)
                     if hasattr(attrib, "mro"):
-                        self.plugins[plugin_name].append(attrib())
+                        self.plugins[plugin_name] = attrib()
             except Exception, e:
                 print "Failed to import plugin %s: %s" % (plugin_name, e)
                 return False
         try:
-            for pl in self.plugins[plugin_name]:
-                print pl
-                pl.load(self)
+            self.plugins[plugin_name].load(self)
+            print "Loaded %s" % plugin_name
             return True
         except Exception, e:
             print "Failed to load plugin %s: %s" % (plugin_name, e)
 
     def disablePlugin(self, plugin_name):
         if self.plugins.get(plugin_name):
-            for pl in self.plugins[plugin_name]:
-                pl.unload()
+            self.plugins[plugin_name].unload()
 
 
     def attachSignals(self):
@@ -147,9 +145,36 @@ class PyazanGTK(object):
                 self.disablePlugin(plugin_name)
         model.set_value(iter, 0, value)
 
+    def getSelectedPlugin(self):
+        treeview = self.ui['plugin_tree']
+        selector = treeview.get_selection()
+        model, iter = selector.get_selected()
+        plugin_name = model.get_value(iter, 1)
+        enabled = model.get_value(iter, 0)
+        return plugin_name, enabled
+
+    def selectPlugin(self, treeview, event):
+        plugin_name, enabled = self.getSelectedPlugin()
+        if plugin_name in self.plugins:
+            plugin = self.plugins[plugin_name]
+            self.ui["lbl_plugin_name"].set_text(plugin_name.capitalize())
+            self.ui["plugin_description"].set_text(plugin.getDescription())
+            widget = plugin.getUiWidget()
+            plc_hld = self.ui["plugin_pref_placeholder"]
+            for child in plc_hld.get_children():
+                plc_hld.remove(child)
+            if not widget:
+                self.ui["btn_plugin_preferences"].set_sensitive(False)
+            else:
+                self.ui["btn_plugin_preferences"].set_sensitive(True)
+                widget.show()
+                plc_hld.add(widget)
+
+
     def showOptionsWindow(self, *args):
         self.ui["pref_window"].show()
         model = self.ui["plugin_tree"].get_model()
+        self.ui["plugin_tree"].connect("button-release-event", self.selectPlugin)
         # column for enable/disable
         renderer = gtk.CellRendererToggle()
         renderer.connect('toggled', self.pluginChanged, model)

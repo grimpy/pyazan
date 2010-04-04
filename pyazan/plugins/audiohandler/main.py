@@ -1,6 +1,5 @@
-import gst
+import gst, os
 from pyazan.paths import SOUND
-import os
 from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):
@@ -24,3 +23,12 @@ class Plugin(plugin.Plugin):
     def unload(self):
         self.pyazangui.praynotifier.onTime.removeCallback(self.play)
 
+    def getUiWidget(self):
+        import gtk
+        btn = gtk.Button()
+        btn.set_name("bla")
+        btn.set_label("test")
+        return None
+
+    def getDescription(self):
+        return "Play Athan sound!"

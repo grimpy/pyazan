@@ -4,6 +4,7 @@ from stopwatch import isInSameDay
 from angle import *
 from stopwatch import Alarm
 from event import Event
+import os
 
 PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
@@ -45,6 +46,7 @@ def getNextPrayer(pray_int, prayer=None):
     if prayer:
         nextprayer = getNexPrayerName(prayer)
         prayertime = getattr(pray_int, nextprayer)
+        print prayertime, now
         if isInSameDay(prayertime, now):
             return nextprayer, prayertime
         pray_int.day = getTomorrow()
@@ -69,7 +71,7 @@ class Praytime(object):
             setattr(self, praytime, (0,0))
         self.location = location
         self.day = day
-    
+
     def setLocation(self, location):
         if location:
             self._location = location
@@ -79,15 +81,15 @@ class Praytime(object):
         if day:
             self._day = day
             self.calculatetimes()
-    
+
     location = property(fset=setLocation, fget=lambda s: s._location)
     day = property(fset=setDay, fget=lambda s: s._day)
-    
+
     def calculatetimes(self):
         if not self.day or not self.location:
             return
         day2000 = datetime.datetime(2000, 1, 1)
-        d = (self.day-day2000).days 
+        d = (self.day-day2000).days
         g = fixangle(357.529 + 0.98560028* d);
         q = fixangle(280.459 + 0.98564736* d);
         L = fixangle(q + 1.915* dsin(g) + 0.020* dsin(2*g));
@@ -103,19 +105,19 @@ class Praytime(object):
         sunsetangle = 0.8333
         #get asr angle
         asrangle = -dacot(1 + dtan(int(self.location.latitude-D)))
-        
+
         duhr = 12+self.location.timezone - self.location.longitude/15 - EqT
         Fajr = duhr - self.tfunc(D, self.location.latitude, 19.5)
         Isha = duhr + self.tfunc(D, self.location.latitude, 17.5)
         Asr = duhr + self.tfunc(D, self.location.latitude, asrangle)
-        
+
         self.fajr = getHoursMin(Fajr)
         self.sunrise = getHoursMin(duhr - self.tfunc(D, self.location.latitude, sunsetangle))
         self.duhr = getHoursMin(duhr)
         self.maghrib = getHoursMin(duhr + self.tfunc(D, self.location.latitude, sunsetangle))
         self.asr = getHoursMin(Asr)
         self.isha = getHoursMin(Isha)
-    
+
 
     def tfunc(self, D, lati, angle):
         Z = (1.0/15) * dacos((-dsin(angle)-dsin(D)*dsin(lati))/(dcos(lati)*dcos(D)))
@@ -132,7 +134,8 @@ class Praytime(object):
             strrepr.append("%-14s\t%s" % (praytime.capitalize(), timestring))
         return "\n".join(strrepr)
 
-#from test.test import Praytime
+if os.environ.get("DEBUG"):
+    from test.test import Praytime
 
 class PrayerTimesNotifier(object):
     def __init__(self, location, alert_on):
@@ -144,11 +147,11 @@ class PrayerTimesNotifier(object):
         self.alarm = Alarm()
         self._ontime = Event()
         self.alert_on = alert_on
-    
+
     @property
     def onTime(self):
         return self._ontime
-    
+
     def start(self):
         """
         Start notifying on prayers times
@@ -159,15 +162,15 @@ class PrayerTimesNotifier(object):
             self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0], self.waitingfor[1])
         self.running = True
         return True
-    
+
     def _notify(self, *args):
         self.now = self.waitingfor
         if self.waitingfor[0] in self.alert_on:
             self._ontime.fire(*args)
         self.start()
-    
+
     def __str__(self):
         return str(self.praytime)
-    
+
     def __repr__(self):
         return str(self)

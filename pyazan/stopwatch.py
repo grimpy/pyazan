@@ -2,8 +2,14 @@ import time
 import datetime
 import gobject
 
+DELTA_TIME = 60
+
 def isInSameDay(timearg, refdate):
-    return not (refdate.hour > timearg[0] or (refdate.hour == timearg[0] and refdate.minute > timearg[1]))
+    if (refdate.hour < timearg[0]):
+        return True
+    if (refdate.hour == timearg[0] and refdate.minute <= timearg[1]):
+        return True
+    return False
 
 def convertToEpoch(timearg):
     if isinstance(timearg, (float, int)):
@@ -12,7 +18,7 @@ def convertToEpoch(timearg):
         if len(timearg) == 2:
             refdate = datetime.datetime.now()
             if not isInSameDay(timearg, refdate):
-                refdate = refdate+ datetime.timedelta(1)
+                refdate = refdate + datetime.timedelta(1)
             timearg = datetime.datetime(refdate.year, refdate.month, refdate.day, timearg[0], timearg[1])
             return int(timearg.strftime("%s"))
     elif isinstance(timearg, datetime.datetime):
@@ -28,12 +34,12 @@ class Alarm():
         delta = convertToEpoch(timearg) - time.time()
         if delta < 0:
             delta = 0
-        if delta > 60:
+        if delta > DELTA_TIME:
             args = list(args)
             args.insert(0, func)
             args.insert(0, timearg)
             func = self.addAlarm
-            delta = 60
+            delta = DELTA_TIME
         gobject.timeout_add_seconds(int(delta), func, *args, **kwargs)
 
 if __name__ == '__main__':
