@@ -1,6 +1,6 @@
 import gtk
 import gobject
-import os
+import os, logging
 from praytime import PrayerTimesNotifier, PRAYER_NAMES
 from location import Location
 from options import Options
@@ -106,14 +106,14 @@ class PyazanGTK(object):
                     if hasattr(attrib, "mro"):
                         self.plugins[plugin_name] = attrib()
             except Exception, e:
-                print "Failed to import plugin %s: %s" % (plugin_name, e)
+                logging.error("Failed to import plugin %s: %s", plugin_name, e)
                 return False
         try:
             self.plugins[plugin_name].load(self)
-            print "Loaded %s" % plugin_name
+            logging.info("Loaded %s", plugin_name)
             return True
         except Exception, e:
-            print "Failed to load plugin %s: %s" % (plugin_name, e)
+            logging.error("Failed to load plugin %s: %s", plugin_name, e)
 
     def disablePlugin(self, plugin_name):
         if self.plugins.get(plugin_name):

@@ -1,7 +1,13 @@
 #!/usr/bin/env python
+import logging, os
 from pyazan.pyazan_gui_handler import PyazanGTK
 
+
 if __name__ == "__main__":
+    loglevel = logging.WARNING
+    if os.environ.get("DEBUG"):
+        loglevel = logging.DEBUG
+    logging.basicConfig(level=loglevel,format='%(asctime)s %(levelname)s %(message)s')
     mainapp = PyazanGTK()
     #start the main program loop.
     mainapp.start()

@@ -1,4 +1,4 @@
-import pynotify
+import pynotify, logging
 from pyazan.paths import ICON
 from pyazan.plugins import plugin
 pynotify.init('pyazan')

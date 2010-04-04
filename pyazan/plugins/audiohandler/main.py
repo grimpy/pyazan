@@ -1,4 +1,4 @@
-import gst, os
+import gst, os, logging
 from pyazan.paths import SOUND
 from pyazan.plugins import plugin
 
@@ -8,7 +8,7 @@ class Plugin(plugin.Plugin):
         self.builder = None
 
     def play(self, *args):
-        print "Play"
+        logging.info("Play")
         self.player = gst.element_factory_make("playbin", "player")
         self.player.set_property('uri', "file://%s" % self.file)
         self.player.set_property("volume", self.volume)

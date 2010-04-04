@@ -1,3 +1,5 @@
+import logging
+
 class Plugin(object):
     def __init__(self):
         pass
@@ -15,5 +17,5 @@ class Plugin(object):
         return None
 
     def save(self):
-        print "Save Not implemented %s" %  self
+        logging.warning("Save Not implemented %s",  self)
         pass

@@ -1,10 +1,8 @@
-import math
-import time, datetime
+import time, datetime, math, logging, os
 from stopwatch import isInSameDay
 from angle import *
 from stopwatch import Alarm
 from event import Event
-import os
 
 PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
 
@@ -46,7 +44,6 @@ def getNextPrayer(pray_int, prayer=None):
     if prayer:
         nextprayer = getNexPrayerName(prayer)
         prayertime = getattr(pray_int, nextprayer)
-        print prayertime, now
         if isInSameDay(prayertime, now):
             return nextprayer, prayertime
         pray_int.day = getTomorrow()
@@ -158,7 +155,7 @@ class PrayerTimesNotifier(object):
         """
         if self.waitingfor == self.now or not self.running:
             self.waitingfor = getNextPrayer(self.praytime, self.now[0])
-            print "Adding alarm", self.waitingfor
+            logging.info("Adding alarm %s", self.waitingfor)
             self.alarm.addAlarm(self.waitingfor[1], self._notify, self.waitingfor[0], self.waitingfor[1])
         self.running = True
         return True

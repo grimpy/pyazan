@@ -1,5 +1,5 @@
 #from pyazan import praytime, location
-import datetime
+import datetime, logging
 #Location = location.Location
 
 PRAYER_NAMES = ['fajr','sunrise', 'duhr', 'asr', 'maghrib', 'isha']
@@ -11,7 +11,7 @@ class Praytime(object):
     DELTA = datetime.timedelta(minutes=1)
 
     def __init__(self, *args):
-        print "Construct", args
+        logging.info("Construct %s", args)
         self.setPrayers()
 
     def setPrayers(self):
@@ -25,7 +25,7 @@ class Praytime(object):
             cnt+=1
 
     def setDate(self, *args):
-        print "SetDate", args
+        logging.info("SetDate %s", args)
         self.setPrayers()
 
     day = property(fset=setDate)
