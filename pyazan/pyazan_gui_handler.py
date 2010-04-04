@@ -72,6 +72,8 @@ class PyazanGTK(object):
             if enabled:
                 enabled_plugins.append(plugin_name)
         self.options.setEnabledPlugins(enabled_plugins)
+        for pl in self.plugins.itervalues():
+            pl.save()
         self.options.save()
 
     def settingsOk(self, *args):

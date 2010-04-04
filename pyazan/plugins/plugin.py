@@ -13,3 +13,7 @@ class Plugin(object):
 
     def getUiWidget(self):
         return None
+
+    def save(self):
+        print "Save Not implemented %s" %  self
+        pass
