@@ -1,5 +1,5 @@
 import gst, os, logging
-from pyazan.paths import SOUND
+from pyazan.paths import SOUND, XML
 from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):
@@ -38,7 +38,7 @@ class Plugin(plugin.Plugin):
 
     def getUiWidget(self):
         import gtk
-        ui_config = os.path.join(os.path.dirname(__file__), "options.xml")
+        ui_config = os.path.join(XML, "audiohandler.xml")
         self.builder = gtk.Builder()
         self.builder.add_from_file(ui_config)
         self.builder.get_object("file").set_filename(self.getAzanFile())
