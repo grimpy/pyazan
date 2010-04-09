@@ -7,6 +7,16 @@ from options import Options
 from paths import *
 from stopwatch import getTimeDiff
 
+class UiDict(dict):
+    def __init__(self, builder):
+        self.builder = builder
+        self.cache = dict()
+
+    def __getitem__(self, name):
+        if name not in self.cache:
+            self.cache[name] = self.builder.get_object(name)
+        return self.cache[name]
+
 class PyazanGTK(object):
     def __init__(self):
         self.mainloop = gobject.MainLoop()
@@ -19,7 +29,7 @@ class PyazanGTK(object):
         self.build = gtk.Builder()
         self.build.add_from_file(os.path.join(XML, 'pyazan_ui.xml'))
 
-        self.ui = dict(((x.get_name(), x) for x in self.build.get_objects() if hasattr(x, 'get_name')))
+        self.ui = UiDict(self.build)
         self.attachSignals()
 
         self.loadOptions()

@@ -5,6 +5,7 @@ pynotify.init('pyazan')
 
 class Plugin(plugin.Plugin):
     def __init__(self):
+        self.name = "notification"
         self.notify = pynotify.Notification("Praying Time")
 
     def load(self, pyazangui):

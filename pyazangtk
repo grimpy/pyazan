@@ -2,7 +2,6 @@
 import logging, os
 from pyazan.pyazan_gui_handler import PyazanGTK
 
-
 if __name__ == "__main__":
     loglevel = logging.WARNING
     if os.environ.get("DEBUG"):

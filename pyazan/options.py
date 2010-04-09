@@ -8,7 +8,7 @@ from praytime import PRAYER_NAMES
 class Options(object):
     def __init__(self):
         self.filename = paths.CONFIGPATH
-        defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "enabled": True, "text":"It's time to pray"}
+        defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "text":"It's time to pray"}
         self.options = ConfigParser(defaults)
         self.options.read(self.filename)
 
@@ -24,7 +24,7 @@ class Options(object):
 
     def getEnabledPlugins(self):
         if self.options.has_section("main"):
-            return self.options.get("main", "plugins").split(",")
+            return [ x.strip() for x in self.options.get("main", "plugins").split(",") ]
         return list()
 
     def setEnabledPlugins(self, plugins):
@@ -78,9 +78,3 @@ class Options(object):
     def save(self):
         fd = open(self.filename, "w")
         self.options.write(fd)
-
-    def enableNotifications(self, flag):
-        self.setValue("notification", "enabled", flag)
-
-    def isNotificationEnabled(self):
-        return self.getOption("notification", "enabled", True, True)

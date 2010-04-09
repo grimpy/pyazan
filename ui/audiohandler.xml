@@ -6,6 +6,7 @@
     <property name="visible">True</property>
     <property name="n_rows">5</property>
     <property name="n_columns">2</property>
+    <property name="row_spacing">5</property>
     <child>
       <object class="GtkLabel" id="lbl_volume">
         <property name="visible">True</property>
