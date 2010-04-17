@@ -8,7 +8,7 @@ from praytime import PRAYER_NAMES
 class Options(object):
     def __init__(self):
         self.filename = paths.CONFIGPATH
-        defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES), "text":"It's time to pray"}
+        defaults = {"timeout":0, "events": ",".join(PRAYER_NAMES)}
         self.options = ConfigParser(defaults)
         self.options.read(self.filename)
 
@@ -35,11 +35,6 @@ class Options(object):
         pl.add(name)
         self.setEnabledPlugins(pl)
 
-    def getNotificationTimeout(self):
-        if self.options.has_section("notification"):
-            return self.options.getint("notification", "timeout")
-        return 0
-
     def getLocation(self):
         if self.options.has_section("location"):
             long = self.options.getfloat("location", "long")
@@ -63,17 +58,8 @@ class Options(object):
         self.setValue("location", "lat", location.latitude)
         self.setValue("location", "timezone", location.timezone)
 
-    def setNotificationTimeout(self, value):
-        self.setValue("notification", "timeout", int(value))
-
     def setNotifications(self, events):
         self.setValue("notification", "events", ",".join(events))
-
-    def getNotificationText(self):
-        return self.getOption("notification", "text", "It's time to pray")
-
-    def setNotificationText(self, text):
-        self.setValue("notification", "text", text)
 
     def save(self):
         fd = open(self.filename, "w")

@@ -4,9 +4,9 @@ from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):
     def __init__(self):
+        super(Plugin, self).__init__()
         self.name = "audiohandler"
         self.file = None
-        self.builder = None
 
     def play(self, *args):
         logging.info("Play")
