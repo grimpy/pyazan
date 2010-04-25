@@ -24,18 +24,35 @@ class Plugin(plugin.Plugin):
         self.notify.update("Praying Time", notificationtext, ICON)
         self.notify.show()
 
+    def _test(self, *args):
+        txt, timeout = self.get_settings()
+        txt, self.notifytext = self.notifytext, txt
+        timeout, self.timeout = self.timeout, timeout
+        self.showNotify("Test", (0,0))
+        self.timeout = timeout
+        self.notifytext = txt
+
     def getUiWidget(self):
         widget = super(Plugin, self).getUiWidget()
         self.builder.get_object("txtbx").set_text(self.notifytext)
         self.builder.get_object("timeout").set_value(self.timeout)
+        self.builder.get_object("btn_test").connect("released", self._test)
         return widget
 
     def getDescription(self):
         return "Show notifcation via libnotify"
 
-    def save(self):
+    def get_settings(self):
         text = self.builder.get_object("txtbx").get_text()
-        self.pyazangui.options.setValue(self.name, "text", text)
-        self.timeout = int(self.builder.get_object("timeout").get_value())
+        timeout = int(self.builder.get_object("timeout").get_value())
+        return text, timeout
+
+    def set_settings(self, text, timeout):
         self.notify.set_timeout(self.timeout*1000)
+        self.notifytext = text
+
+    def save(self):
+        text, self.timeout = self.get_settings()
+        self.set_settings(text, self.timeout)
+        self.pyazangui.options.setValue(self.name, "text", text)
         self.pyazangui.options.setValue(self.name, "timeout", self.timeout)

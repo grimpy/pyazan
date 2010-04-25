@@ -15,7 +15,7 @@ class Options(object):
     def setValue(self, section, option, value):
         if not self.options.has_section(section):
             self.options.add_section(section)
-        self.options.set(section, option, value)
+        self.options.set(section, option, str(value))
 
     def getNotifications(self):
         if self.options.has_section("notification"):

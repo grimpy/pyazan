@@ -19,6 +19,7 @@ class UiDict(dict):
 
 class PyazanGTK(object):
     def __init__(self):
+        self._options_window_loaded = False
         self.mainloop = gobject.MainLoop()
 
         self.status_icon = gtk.StatusIcon()
@@ -185,6 +186,10 @@ class PyazanGTK(object):
 
     def showOptionsWindow(self, *args):
         self.ui["pref_window"].show()
+        if not self._options_window_loaded:
+            self.load_options_window()
+
+    def load_options_window(self):
         model = self.ui["plugin_tree"].get_model()
         self.ui["plugin_tree"].connect("button-release-event", self.selectPlugin)
         # column for enable/disable
@@ -203,6 +208,7 @@ class PyazanGTK(object):
             iter = model.append()
             enabled = k in self.options.getEnabledPlugins()
             model.set(iter, 0, enabled, 1, k)
+        self._options_window_loaded = True
 
     def showStatusIconPopup(self, icon, button ,timeout):
         self.ui["traymenu"].popup(None, None, None, button, timeout)
