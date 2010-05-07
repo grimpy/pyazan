@@ -39,7 +39,7 @@ class Options(object):
         if self.options.has_section("location"):
             long = self.options.getfloat("location", "long")
             lat = self.options.getfloat("location", "lat")
-            timezone = self.options.getint("location", "timezone")
+            timezone = self.getOption("location", "timezone", "auto")
             name = self.options.get("location", "name")
             return Location(name, long, lat, timezone)
         return None

@@ -1,4 +1,7 @@
-import urllib, urllib2
+import urllib, urllib2, time
+import logging
+
+AUTO_TIME_ZONE = "AUTO"
 try:
     import json
 except ImportError:
@@ -13,10 +16,15 @@ except ImportError:
         json = fakeJson()
 
 class Location(object):
-    def __init__(self, name=None, longitude=None, latitude=None, timezone=0):
+    def __init__(self, name=None, longitude=None, latitude=None, timezone=AUTO_TIME_ZONE):
         self.longitude = longitude
         self.latitude = latitude
         self.name = name
+        if timezone.upper() == AUTO_TIME_ZONE or not timezone.isdigit():
+            timezone = int(time.altzone/3600) * -1
+            logging.info("Auto timezone %d", timezone)
+        else:
+            timezone = int(timezone)
         self.timezone = timezone
 
 def _get_url(search):

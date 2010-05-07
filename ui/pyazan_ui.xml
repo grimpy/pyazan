@@ -250,6 +250,9 @@
                                     <property name="model">cmbbox_tz_data</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="Name"/>
+                                      <attributes>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
                                     </child>
                                   </object>
                                 </child>
