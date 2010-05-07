@@ -19,17 +19,17 @@ class Location(object):
         self.name = name
         self.timezone = timezone
 
-class GoogleLocation(object):
-    def __init__(self):
-        pass
+def _get_url(search):
+    return "http://maps.google.com/maps/geo?%s" % urllib.urlencode({"q":search, "output":"json"})
 
-    def getUrl(self, search):
-        return "http://maps.google.com/maps/geo?%s" % urllib.urlencode({"q":search, "output":"json"})
-
-    def search(self, location):
-        urlo = urllib2.urlopen(self.getUrl(location))
-        data = urlo.read()
-        return json.loads(data)
+def search(location):
+    urlo = urllib2.urlopen(_get_url(location))
+    data = urlo.read()
+    rawdata = json.loads(data)
+    for place in rawdata["Placemark"]:
+        long, lat = place["Point"]["coordinates"][:-1]
+        info = Location(place["address"], long, lat, 'auto')
+        yield info
 
 if __name__ == '__main__':
-    print GoogleLocation().search("Cairo")
+    print list(search("Stekene"))
