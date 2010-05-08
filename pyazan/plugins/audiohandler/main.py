@@ -45,4 +45,4 @@ class Plugin(plugin.Plugin):
         return widget
 
     def getDescription(self):
-        return "Play Athan sound!"
+        return "Play Azan sound!"
