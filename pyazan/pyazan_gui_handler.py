@@ -19,6 +19,7 @@ class PyazanGTK(object):
         self.options = Options()
 
         self.ui = UiDict(os.path.join(XML, 'pyazan_ui.xml'))
+        self.ui['pref_window'].set_icon_from_file(TRAYICON)
         self.attachSignals()
 
         self.loadOptions()
@@ -112,3 +113,4 @@ class PyazanGTK(object):
 
     def showStatusIconPopup(self, icon, button ,timeout):
         self.ui["traymenu"].popup(None, None, None, button, timeout)
+
