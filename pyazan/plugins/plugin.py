@@ -4,7 +4,7 @@ from pyazan.paths import XML
 class Plugin(object):
     def __init__(self):
         self.name = None
-        self._cache = dict()
+        self._builder = None
 
     def load(self, *args):
         raise NotImplementedError
@@ -16,17 +16,15 @@ class Plugin(object):
         return "No description"
 
     def _get_builder(self):
-        if "builder" not in self._cache:
+        if not self._builder:
             import gtk
             ui_config = os.path.join(XML, "%s.xml" % self.name)
             logging.info("Reading %s from ui", ui_config)
             if os.path.exists(ui_config):
                 builder = gtk.Builder()
                 builder.add_from_file(ui_config)
-                self._cache['builder'] = builder
-            else:
-                self._cache['builder'] = None
-        return self._cache['builder']
+                self._builder = builder
+        return self._builder
 
     builder = property(fget=_get_builder)
 

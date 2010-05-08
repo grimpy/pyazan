@@ -8,8 +8,9 @@ from paths import *
 from stopwatch import getTimeDiff
 
 class UiDict(dict):
-    def __init__(self, builder):
-        self.builder = builder
+    def __init__(self, file):
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(file)
         self.cache = dict()
 
     def __getitem__(self, name):
@@ -27,10 +28,8 @@ class PyazanGTK(object):
 
         self.options = Options()
 
-        self.build = gtk.Builder()
-        self.build.add_from_file(os.path.join(XML, 'pyazan_ui.xml'))
-
-        self.ui = UiDict(self.build)
+        self.ui = UiDict(os.path.join(XML, 'pyazan_ui.xml'))
+        self.ui_location = UiDict(os.path.join(XML, 'location.xml'))
         self.attachSignals()
 
         self.loadOptions()
@@ -58,6 +57,8 @@ class PyazanGTK(object):
         location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(location, praynotifies)
         self.updateToolTip()
+
+        self.ui["txt_location"].set_text(str(location))
 
         #set notify times in preference menu
         for prayer_name in PRAYER_NAMES:
@@ -130,6 +131,18 @@ class PyazanGTK(object):
         if self.plugins.get(plugin_name):
             self.plugins[plugin_name].unload()
 
+    def load_location(self, *args):
+        self.ui_location["wnd_loc_search"].show()
+        self.ui_location["btn_loc_search"].connect("released", self.search_location)
+
+    def search_location(self, *args):
+        from location import search
+        model = self.ui_location["tree_loc"].get_model()
+        for loc in search(self.ui_location["txtbx_loc_search"].get_text()):
+            iter = model.append()
+            model.set(iter, 0, loc.name, 1, loc.longitude, 2, loc.latitude)
+            logging.debug(str(loc))
+
 
     def attachSignals(self):
         #connect events
@@ -138,6 +151,7 @@ class PyazanGTK(object):
         self.ui["btn_pref_cancel"].connect("released", self.closeOptionsWindow)
         self.ui["btn_pref_apply"].connect("released", self.applyConfig)
         self.ui["btn_pref_ok"].connect("released", self.settingsOk)
+        self.ui["btn_change_loc"].connect("released", self.load_location)
 
         self.status_icon.connect("popup-menu", self.showStatusIconPopup)
 
@@ -162,7 +176,7 @@ class PyazanGTK(object):
         treeview = self.ui['plugin_tree']
         selector = treeview.get_selection()
         model, iter = selector.get_selected()
-        plugin_name = model.get_value(iter, 1)
+        plugin_name = model.get_value(iter, 2)
         enabled = model.get_value(iter, 0)
         return plugin_name, enabled
 
@@ -170,16 +184,12 @@ class PyazanGTK(object):
         plugin_name, enabled = self.getSelectedPlugin()
         if plugin_name in self.plugins:
             plugin = self.plugins[plugin_name]
-            self.ui["lbl_plugin_name"].set_text(plugin_name.capitalize())
             self.ui["plugin_description"].set_text(plugin.getDescription())
             widget = plugin.getUiWidget()
             plc_hld = self.ui["plugin_pref_placeholder"]
             for child in plc_hld.get_children():
                 plc_hld.remove(child)
-            if not widget:
-                self.ui["btn_plugin_preferences"].set_sensitive(False)
-            else:
-                self.ui["btn_plugin_preferences"].set_sensitive(True)
+            if widget:
                 widget.show()
                 plc_hld.add(widget)
 
@@ -207,7 +217,7 @@ class PyazanGTK(object):
         for k, v in self.plugins.iteritems():
             iter = model.append()
             enabled = k in self.options.getEnabledPlugins()
-            model.set(iter, 0, enabled, 1, k)
+            model.set(iter, 0, enabled, 1, k.capitalize(), 2, k)
         self._options_window_loaded = True
 
     def showStatusIconPopup(self, icon, button ,timeout):

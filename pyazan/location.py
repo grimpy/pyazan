@@ -27,6 +27,11 @@ class Location(object):
             timezone = int(timezone)
         self.timezone = timezone
 
+    def __str__(self):
+        return "%s - %s, %s" % (self.name, self.longitude, self.latitude)
+
+    __repr__ = __str__
+
 def _get_url(search):
     return "http://maps.google.com/maps/geo?%s" % urllib.urlencode({"q":search, "output":"json"})
 
@@ -34,9 +39,11 @@ def search(location):
     urlo = urllib2.urlopen(_get_url(location))
     data = urlo.read()
     rawdata = json.loads(data)
+    if rawdata["Status"]["code"] != 200:
+        return
     for place in rawdata["Placemark"]:
         long, lat = place["Point"]["coordinates"][:-1]
-        info = Location(place["address"], long, lat, 'auto')
+        info = Location(str(place["address"]), long, lat, 'auto')
         yield info
 
 if __name__ == '__main__':

@@ -8,34 +8,52 @@ class Plugin(plugin.Plugin):
         super(Plugin, self).__init__()
         self.name = "notification"
         self.notify = pynotify.Notification("Praying Time")
+        self._timeout = None
+        self._notify_text = None
+
+    def _get_timeout(self):
+        if not self._builder:
+            return int(self.pyazangui.options.getOption(self.name, "timeout", 0))
+        else:
+            return int(self.builder.get_object("timeout").get_value())
+
+    def _set_timeout(self, timeout):
+        self._timeout = timeout
+        self.notify.set_timeout(self._timeout*1000)
+
+    def _get_notify_text(self):
+        if not self._builder:
+            return self.pyazangui.options.getOption(self.name, "text", "It's time to pray")
+        else:
+            return self.builder.get_object("txtbx").get_text()
+
+    def _set_notify_text(self, text):
+        self._notify_text = text
+
+    timeout = property(fget=_get_timeout, fset=_set_timeout)
+    notify_text = property(fget=_get_notify_text, fset=_set_notify_text)
 
     def load(self, pyazangui):
         self.pyazangui = pyazangui
-        self.notifytext = self.pyazangui.options.getOption(self.name, "text", "It's time to pray")
-        self.timeout = int(self.pyazangui.options.getOption(self.name, "timeout", 0))
-        self.notify.set_timeout(self.timeout*1000)
         self.pyazangui.praynotifier.onTime.addCallback(self.showNotify)
 
     def unload(self):
         self.pyazangui.praynotifier.onTime.removeCallback(self.showNotify)
 
     def showNotify(self, prayer, time):
-        notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notifytext, prayer.capitalize(), time[0], time[1])
+        notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notify_text, prayer.capitalize(), time[0], time[1])
         self.notify.update("Praying Time", notificationtext, ICON)
         self.notify.show()
 
     def _test(self, *args):
-        txt, timeout = self.get_settings()
-        txt, self.notifytext = self.notifytext, txt
-        timeout, self.timeout = self.timeout, timeout
         self.showNotify("Test", (0,0))
-        self.timeout = timeout
-        self.notifytext = txt
 
     def getUiWidget(self):
+        txt = self.notify_text
+        timeout = self.timeout
         widget = super(Plugin, self).getUiWidget()
-        self.builder.get_object("txtbx").set_text(self.notifytext)
-        self.builder.get_object("timeout").set_value(self.timeout)
+        self.builder.get_object("txtbx").set_text(txt)
+        self.builder.get_object("timeout").set_value(timeout)
         self.builder.get_object("btn_test").connect("released", self._test)
         return widget
 
@@ -46,10 +64,6 @@ class Plugin(plugin.Plugin):
         text = self.builder.get_object("txtbx").get_text()
         timeout = int(self.builder.get_object("timeout").get_value())
         return text, timeout
-
-    def set_settings(self, text, timeout):
-        self.notify.set_timeout(self.timeout*1000)
-        self.notifytext = text
 
     def save(self):
         text, self.timeout = self.get_settings()
