@@ -38,4 +38,4 @@ class PyAzanDbus(dbus.service.Object):
 
     @dbus.service.signal(dbus_interface='com.github.grimpy.pyazan', signature='sii')
     def praytime(self, prayer, hour, time):
-        self.prayerinof = args
+        self.prayerinfo = [prayer, [hour,time]]
