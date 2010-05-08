@@ -1,4 +1,5 @@
 import os, logging
+import gtk
 
 from paths import getFullPath
 
@@ -20,6 +21,10 @@ class PluginLoader(dict):
                 logging.error("Failed to import plugin %s: %s", name, e)
                 return False
         return self._cache[name]
+
+    def __iter__(self):
+        for x in self._cache:
+            yield x
 
 
 class PluginGTK(object):
@@ -85,7 +90,7 @@ class PluginGTK(object):
             plc_hld.add(widget)
 
     def load_options_window(self):
-        model = self.ui["plugin_tree"].get_model()
+        model = self.ui["liststore_plugins"]
         self.ui["plugin_tree"].connect("button-release-event", self.select_plugin)
         self.ui["plugin_enabled_toggle"].connect("toggled", self.plugin_changed, model)
         for name in self.get_plugin_list():
@@ -105,6 +110,6 @@ class PluginGTK(object):
             if enabled:
                 enabled_plugins.append(plugin_name)
         self.pyazan.options.setEnabledPlugins(enabled_plugins)
-        for pl in self.plugins.itervalues():
-            if pl:
-                pl.save()
+        for name in self.plugins:
+            if self.plugins[name]:
+                self.plugins[name].save()
