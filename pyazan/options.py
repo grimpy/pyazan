@@ -1,7 +1,6 @@
-
 from ConfigParser import ConfigParser
+
 import paths
-import os
 from location import Location
 from praytime import PRAYER_NAMES
 

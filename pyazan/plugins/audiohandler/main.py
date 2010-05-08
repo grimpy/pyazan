@@ -1,5 +1,5 @@
 import gst, os, logging
-from pyazan.paths import SOUND, XML
+from pyazan.paths import SOUND
 from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):

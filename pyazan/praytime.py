@@ -1,6 +1,6 @@
-import time, datetime, math, logging, os
+import datetime, math, logging, os
 from stopwatch import isInSameDay
-from angle import *
+from angle import dsin, dtan, dacot, dcos, dasin, dacos, datan2, fixangle
 from stopwatch import Alarm
 from event import Event
 

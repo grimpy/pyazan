@@ -2,9 +2,8 @@ import gtk
 import gobject
 import os, logging
 from praytime import PrayerTimesNotifier, PRAYER_NAMES
-from location import Location
 from options import Options
-from paths import *
+from paths import XML, TRAYICON
 from stopwatch import getTimeDiff
 from ui_common import UiDict
 from plugin_gui_handler import PluginGTK
@@ -42,7 +41,6 @@ class PyazanGTK(object):
         return True
 
     def load_options(self):
-        praynotified = list()
         praynotifies = self.options.getNotifications()
         self.location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(self.location, praynotifies)
