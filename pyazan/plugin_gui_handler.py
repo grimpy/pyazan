@@ -57,7 +57,7 @@ class PluginGTK(object):
         iter = model.get_iter((int(position),))
         value = not cell.get_active()
         if iter:
-            plugin_name = model.get_value(iter, 1)
+            plugin_name = model.get_value(iter, 2)
             if value:
                 self.enable_plugin(plugin_name)
             else:
