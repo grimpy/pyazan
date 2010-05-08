@@ -83,3 +83,7 @@ class PluginGTK(object):
             iter = model.append()
             enabled = k in self.pyazan.options.getEnabledPlugins()
             model.set(iter, 0, enabled, 1, k.capitalize(), 2, k)
+
+    def save(self):
+        for pl in self.plugins.itervalues():
+            pl.save()

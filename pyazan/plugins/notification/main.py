@@ -66,7 +66,5 @@ class Plugin(plugin.Plugin):
         return text, timeout
 
     def save(self):
-        text, self.timeout = self.get_settings()
-        self.set_settings(text, self.timeout)
-        self.pyazangui.options.setValue(self.name, "text", text)
+        self.pyazangui.options.setValue(self.name, "text", self.notify_text)
         self.pyazangui.options.setValue(self.name, "timeout", self.timeout)

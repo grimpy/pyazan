@@ -20,14 +20,14 @@ class PyazanGTK(object):
 
         self.ui = UiDict(os.path.join(XML, 'pyazan_ui.xml'))
         self.ui['pref_window'].set_icon_from_file(TRAYICON)
-        self.attachSignals()
+        self.attach_signals()
 
-        self.loadOptions()
+        self.load_options()
         self.plugin_handler = PluginGTK(self)
-        gobject.timeout_add_seconds(60, self.updateToolTip)
+        gobject.timeout_add_seconds(60, self.update_tool_tip)
 
 
-    def updateToolTip(self):
+    def update_tool_tip(self):
         prayer, time = self.praynotifier.now
         tooltiplist = str(self.praynotifier).split("\n")
         currentindex = PRAYER_NAMES.index(prayer)+2
@@ -41,12 +41,12 @@ class PyazanGTK(object):
             self.status_icon.set_tooltip("\n".join(tooltiplist))
         return True
 
-    def loadOptions(self):
+    def load_options(self):
         praynotified = list()
         praynotifies = self.options.getNotifications()
         self.location = self.options.getLocation()
         self.praynotifier = PrayerTimesNotifier(self.location, praynotifies)
-        self.updateToolTip()
+        self.update_tool_tip()
 
         self.ui["txt_location"].set_text(str(self.location))
 
@@ -55,7 +55,7 @@ class PyazanGTK(object):
             enabled = prayer_name in praynotifies
             self.ui["chkbnt_%s" % prayer_name].set_active(enabled)
 
-    def applyConfig(self, *args):
+    def apply_config(self, *args):
         #set prayer events
         pray_names_to_notify = list()
         for prayer_name in PRAYER_NAMES:
@@ -74,13 +74,12 @@ class PyazanGTK(object):
             if enabled:
                 enabled_plugins.append(plugin_name)
         self.options.setEnabledPlugins(enabled_plugins)
-        for pl in self.plugins.itervalues():
-            pl.save()
+        self.plugin_handler.save()
         self.options.save()
 
-    def settingsOk(self, *args):
-        self.applyConfig(*args)
-        self.closeOptionsWindow(*args)
+    def settings_ok(self, *args):
+        self.apply_config(*args)
+        self.close_options_window(*args)
 
     def start(self):
         self.praynotifier.start()
@@ -90,27 +89,26 @@ class PyazanGTK(object):
         from location_ui import Location_ui
         Location_ui(self)
 
-    def attachSignals(self):
+    def attach_signals(self):
         #connect events
         self.ui["menuitem_quit"].connect("activate", self.quit)
-        self.ui["menuitem_options"].connect("activate", self.showOptionsWindow)
-        self.ui["btn_pref_cancel"].connect("released", self.closeOptionsWindow)
-        self.ui["btn_pref_apply"].connect("released", self.applyConfig)
-        self.ui["btn_pref_ok"].connect("released", self.settingsOk)
+        self.ui["menuitem_options"].connect("activate", self.show_options_window)
+        self.ui["btn_pref_cancel"].connect("released", self.close_options_window)
+        self.ui["btn_pref_apply"].connect("released", self.apply_config)
+        self.ui["btn_pref_ok"].connect("released", self.settings_ok)
         self.ui["btn_change_loc"].connect("released", self.load_location)
 
-        self.status_icon.connect("popup-menu", self.showStatusIconPopup)
+        self.status_icon.connect("popup-menu", self.show_status_icon_popup)
 
     def quit(self, *args):
         self.mainloop.quit()
 
-    def closeOptionsWindow(self, *args):
+    def close_options_window(self, *args):
         self.ui["pref_window"].destroy()
 
-    def showOptionsWindow(self, *args):
+    def show_options_window(self, *args):
         self.ui["pref_window"].show()
         self.plugin_handler.load_options_window()
 
-    def showStatusIconPopup(self, icon, button ,timeout):
+    def show_status_icon_popup(self, icon, button ,timeout):
         self.ui["traymenu"].popup(None, None, None, button, timeout)
-
