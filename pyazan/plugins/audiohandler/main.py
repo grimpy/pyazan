@@ -3,8 +3,8 @@ from pyazan.paths import SOUND
 from pyazan.plugins import plugin
 
 class Plugin(plugin.Plugin):
-    def __init__(self):
-        super(Plugin, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(Plugin, self).__init__(*args, **kwargs)
         self.name = "audiohandler"
         self.file = None
 
@@ -15,27 +15,26 @@ class Plugin(plugin.Plugin):
         self.player.set_property("volume", self.volume)
         self.player.set_state(gst.STATE_PLAYING)
 
-    def load(self, pyazangui):
-        self.pyazangui = pyazangui
+    def load(self):
         self.file = self.getAzanFile()
         self.volume = self.getVolume()
-        self.pyazangui.praynotifier.onTime.addCallback(self.play)
+        self.pyazan.praynotifier.onTime.addCallback(self.play)
 
     def getAzanFile(self):
-        return self.pyazangui.options.getOption(self.name, "file", os.path.join(SOUND, "azan.mp3"))
+        return self.pyazan.options.getOption(self.name, "file", os.path.join(SOUND, "azan.mp3"))
 
     def getVolume(self):
-        return int(self.pyazangui.options.getOption(self.name, "volume", 100))/100.0
+        return int(self.pyazan.options.getOption(self.name, "volume", 100))/100.0
 
     def save(self):
         volume = int(self.builder.get_object("volume").get_value())
         self.volume = volume/100.0
-        self.pyazangui.options.setValue(self.name, "volume", volume)
+        self.pyazan.options.setValue(self.name, "volume", volume)
         self.file = self.builder.get_object("file").get_filename()
-        self.pyazangui.options.setValue(self.name, "file", self.file)
+        self.pyazan.options.setValue(self.name, "file", self.file)
 
     def unload(self):
-        self.pyazangui.praynotifier.onTime.removeCallback(self.play)
+        self.pyazan.praynotifier.onTime.removeCallback(self.play)
 
     def getUiWidget(self):
         widget = super(Plugin, self).getUiWidget()

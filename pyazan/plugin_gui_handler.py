@@ -2,16 +2,35 @@ import os, logging
 
 from paths import getFullPath
 
+class PluginLoader(dict):
+    def __init__(self, pyazan):
+        self._pyazan = pyazan
+        self._cache = dict()
+
+    def __getitem__(self, name):
+        if name not in self._cache:
+            try:
+                fromlist = [name]
+                classes = getattr(__import__("pyazan.plugins", fromlist=fromlist), name)
+                for klass in dir(classes):
+                    attrib = getattr(classes, klass)
+                    if hasattr(attrib, "mro"):
+                        self._cache[name] = attrib(self._pyazan)
+            except Exception, e:
+                logging.error("Failed to import plugin %s: %s", name, e)
+                return False
+        return self._cache[name]
+
+
 class PluginGTK(object):
     def __init__(self, pyazan):
         self.ui = pyazan.ui
         self.pyazan = pyazan
-        self.plugins = dict()
+        self.plugins = PluginLoader(pyazan)
         self.load_plugins()
 
     def load_plugins(self):
-        self.plugins = dict((name, list()) for name in self.get_plugin_list())
-        for plugin_name in self.plugins.keys():
+        for plugin_name in self.get_plugin_list():
             if plugin_name in self.pyazan.options.getEnabledPlugins():
                 self.enable_plugin(plugin_name)
 
@@ -22,21 +41,11 @@ class PluginGTK(object):
                 yield file
 
     def enable_plugin(self, plugin_name):
-        if not self.plugins[plugin_name]:
-            try:
-                fromlist = [plugin_name]
-                classes = getattr(__import__("pyazan.plugins", fromlist=fromlist), plugin_name)
-                for klass in dir(classes):
-                    attrib = getattr(classes, klass)
-                    if hasattr(attrib, "mro"):
-                        self.plugins[plugin_name] = attrib()
-            except Exception, e:
-                logging.error("Failed to import plugin %s: %s", plugin_name, e)
-                return False
         try:
-            self.plugins[plugin_name].load(self.pyazan)
-            logging.info("Loaded %s", plugin_name)
-            return True
+            if self.plugins[plugin_name]:
+                self.plugins[plugin_name].load()
+                logging.info("Loaded %s", plugin_name)
+                return True
         except Exception, e:
             logging.error("Failed to load plugin %s: %s", plugin_name, e)
 
@@ -50,9 +59,9 @@ class PluginGTK(object):
         if iter:
             plugin_name = model.get_value(iter, 1)
             if value:
-                self.enablePlugin(plugin_name)
+                self.enable_plugin(plugin_name)
             else:
-                self.disablePlugin(plugin_name)
+                self.disable_plugin(plugin_name)
         model.set_value(iter, 0, value)
 
     def get_selected_plugin(self):
@@ -65,25 +74,37 @@ class PluginGTK(object):
 
     def select_plugin(self, treeview, event):
         plugin_name, enabled = self.get_selected_plugin()
-        if plugin_name in self.plugins:
-            plugin = self.plugins[plugin_name]
-            self.ui["plugin_description"].set_text(plugin.getDescription())
-            widget = plugin.getUiWidget()
-            plc_hld = self.ui["plugin_pref_placeholder"]
-            for child in plc_hld.get_children():
-                plc_hld.remove(child)
-            if widget:
-                widget.show()
-                plc_hld.add(widget)
+        plugin = self.plugins[plugin_name]
+        self.ui["plugin_description"].set_text(plugin.getDescription())
+        widget = plugin.getUiWidget()
+        plc_hld = self.ui["plugin_pref_placeholder"]
+        for child in plc_hld.get_children():
+            plc_hld.remove(child)
+        if widget:
+            widget.show()
+            plc_hld.add(widget)
 
     def load_options_window(self):
         model = self.ui["plugin_tree"].get_model()
         self.ui["plugin_tree"].connect("button-release-event", self.select_plugin)
-        for k, v in self.plugins.iteritems():
+        self.ui["plugin_enabled_toggle"].connect("toggled", self.plugin_changed, model)
+        for name in self.get_plugin_list():
             iter = model.append()
-            enabled = k in self.pyazan.options.getEnabledPlugins()
-            model.set(iter, 0, enabled, 1, k.capitalize(), 2, k)
+            enabled = name in self.pyazan.options.getEnabledPlugins()
+            model.set(iter, 0, enabled, 1, name.capitalize(), 2, name)
 
     def save(self):
+        #save enabled plugins
+        index = 0
+        enabled_plugins = list()
+        model = self.ui["liststore_plugins"]
+        for index in xrange(model.iter_n_children(None)):
+            iter = model.iter_nth_child(None, index)
+            plugin_name = model.get_value(iter, 2)
+            enabled = model.get_value(iter, 0)
+            if enabled:
+                enabled_plugins.append(plugin_name)
+        self.pyazan.options.setEnabledPlugins(enabled_plugins)
         for pl in self.plugins.itervalues():
-            pl.save()
+            if pl:
+                pl.save()

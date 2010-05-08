@@ -4,8 +4,8 @@ from pyazan.plugins import plugin
 pynotify.init('pyazan')
 
 class Plugin(plugin.Plugin):
-    def __init__(self):
-        super(Plugin, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(Plugin, self).__init__(*args, **kwargs)
         self.name = "notification"
         self.notify = pynotify.Notification("Praying Time")
         self._timeout = None
@@ -13,7 +13,7 @@ class Plugin(plugin.Plugin):
 
     def _get_timeout(self):
         if not self._builder:
-            return int(self.pyazangui.options.getOption(self.name, "timeout", 0))
+            return int(self.pyazan.options.getOption(self.name, "timeout", 0))
         else:
             return int(self.builder.get_object("timeout").get_value())
 
@@ -23,7 +23,7 @@ class Plugin(plugin.Plugin):
 
     def _get_notify_text(self):
         if not self._builder:
-            return self.pyazangui.options.getOption(self.name, "text", "It's time to pray")
+            return self.pyazan.options.getOption(self.name, "text", "It's time to pray")
         else:
             return self.builder.get_object("txtbx").get_text()
 
@@ -33,12 +33,11 @@ class Plugin(plugin.Plugin):
     timeout = property(fget=_get_timeout, fset=_set_timeout)
     notify_text = property(fget=_get_notify_text, fset=_set_notify_text)
 
-    def load(self, pyazangui):
-        self.pyazangui = pyazangui
-        self.pyazangui.praynotifier.onTime.addCallback(self.showNotify)
+    def load(self):
+        self.pyazan.praynotifier.onTime.addCallback(self.showNotify)
 
     def unload(self):
-        self.pyazangui.praynotifier.onTime.removeCallback(self.showNotify)
+        self.pyazan.praynotifier.onTime.removeCallback(self.showNotify)
 
     def showNotify(self, prayer, time):
         notificationtext = "%s <b>%s</b> %02d:%02d" % (self.notify_text, prayer.capitalize(), time[0], time[1])
@@ -66,5 +65,5 @@ class Plugin(plugin.Plugin):
         return text, timeout
 
     def save(self):
-        self.pyazangui.options.setValue(self.name, "text", self.notify_text)
-        self.pyazangui.options.setValue(self.name, "timeout", self.timeout)
+        self.pyazan.options.setValue(self.name, "text", self.notify_text)
+        self.pyazan.options.setValue(self.name, "timeout", self.timeout)

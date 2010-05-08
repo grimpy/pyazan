@@ -2,9 +2,10 @@ import logging, os
 from pyazan.paths import XML
 
 class Plugin(object):
-    def __init__(self):
+    def __init__(self, pyazan, *args, **kwargs):
         self.name = None
         self._builder = None
+        self.pyazan = pyazan
 
     def load(self, *args):
         raise NotImplementedError

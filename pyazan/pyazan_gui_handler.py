@@ -61,17 +61,10 @@ class PyazanGTK(object):
                 pray_names_to_notify.append(prayer_name)
         self.options.setNotifications(pray_names_to_notify)
         self.praynotifier.alert_on = pray_names_to_notify
-        #save enabled plugins
-        index = 0
-        enabled_plugins = list()
-        model = self.ui["liststore_plugins"]
-        for index in xrange(model.iter_n_children(None)):
-            iter = model.iter_nth_child(None, index)
-            plugin_name = model.get_value(iter, 1)
-            enabled = model.get_value(iter, 0)
-            if enabled:
-                enabled_plugins.append(plugin_name)
-        self.options.setEnabledPlugins(enabled_plugins)
+        #set location
+        self.praynotifier.praytime.location = self.location
+        self.options.setLocation(self.location)
+
         self.plugin_handler.save()
         self.options.save()
 

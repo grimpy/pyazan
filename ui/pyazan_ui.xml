@@ -505,7 +505,7 @@
                           <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                             <property name="title">column</property>
                             <child>
-                              <object class="GtkCellRendererToggle" id="cellrenderertoggle1"/>
+                              <object class="GtkCellRendererToggle" id="plugin_enabled_toggle"/>
                               <attributes>
                                 <attribute name="active">0</attribute>
                               </attributes>
