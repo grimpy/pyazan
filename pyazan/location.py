@@ -21,7 +21,8 @@ class Location(object):
         self.latitude = latitude
         self.name = name
         if timezone.upper() == AUTO_TIME_ZONE or not timezone.isdigit():
-            timezone = int(time.altzone/3600) * -1
+            offset = time.timezone if not time.localtime().tm_isdst else time.altzone
+            timezone = int(offset/3600) * -1
             logging.info("Auto timezone %d", timezone)
         else:
             timezone = int(timezone)
