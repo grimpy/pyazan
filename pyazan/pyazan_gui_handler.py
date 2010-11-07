@@ -82,6 +82,7 @@ class PyazanGTK(object):
 
     def attach_signals(self):
         #connect events
+        self.ui["pref_window"].connect("delete-event", lambda a,b: a.hide() or True)
         self.ui["menuitem_quit"].connect("activate", self.quit)
         self.ui["menuitem_options"].connect("activate", self.show_options_window)
         self.ui["btn_pref_cancel"].connect("released", self.close_options_window)
@@ -95,7 +96,7 @@ class PyazanGTK(object):
         self.mainloop.quit()
 
     def close_options_window(self, *args):
-        self.ui["pref_window"].destroy()
+        self.ui["pref_window"].hide()
 
     def show_options_window(self, *args):
         self.ui["pref_window"].show()
