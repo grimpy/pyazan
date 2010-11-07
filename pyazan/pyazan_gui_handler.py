@@ -79,7 +79,6 @@ class PyazanGTK(object):
             if iter:
                 model = self.ui['cmbbox_tz_select'].get_model()
                 timezone = model.get_value(iter, 1)
-        print timezone
         return timezone
 
     def settings_ok(self, *args):

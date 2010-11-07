@@ -91,6 +91,7 @@ class PluginGTK(object):
 
     def load_options_window(self):
         model = self.ui["liststore_plugins"]
+        model.clear()
         self.ui["plugin_tree"].connect("button-release-event", self.select_plugin)
         self.ui["plugin_enabled_toggle"].connect("toggled", self.plugin_changed, model)
         for name in self.get_plugin_list():
