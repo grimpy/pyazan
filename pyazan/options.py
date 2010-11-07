@@ -55,7 +55,7 @@ class Options(object):
         self.setValue("location", "name", location.name)
         self.setValue("location", "long", location.longitude)
         self.setValue("location", "lat", location.latitude)
-        self.setValue("location", "timezone", location.timezone)
+        self.setValue("location", "timezone", location.timezoneconfig)
 
     def setNotifications(self, events):
         self.setValue("notification", "events", ",".join(events))

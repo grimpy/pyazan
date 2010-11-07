@@ -20,14 +20,20 @@ class Location(object):
         self.longitude = longitude
         self.latitude = latitude
         self.name = name
-        if timezone.upper() == AUTO_TIME_ZONE or not timezone.isdigit():
-            offset = time.timezone if not time.localtime().tm_isdst else time.altzone
-            timezone = int(offset/3600) * -1
-            logging.info("Auto timezone %d", timezone)
-        else:
-            timezone = int(timezone)
         self.timezone = timezone
 
+    def _set_time_zone(self, timezone):
+        self.timezoneconfig = timezone
+        if isinstance(timezone, int) or timezone.isdigit():
+            self._timezone = int(timezone)
+        else:
+            offset = time.timezone if not time.localtime().tm_isdst else time.altzone
+            self._timezone = int(offset/3600) * -1
+            logging.info("Auto timezone %d", self.timezone)
+
+
+    timezone = property(fget=lambda s: s._timezone, fset=_set_time_zone)
+    
     def __str__(self):
         return "%s - %s, %s" % (self.name, self.longitude, self.latitude)
 

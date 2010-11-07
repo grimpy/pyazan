@@ -62,11 +62,25 @@ class PyazanGTK(object):
         self.options.setNotifications(pray_names_to_notify)
         self.praynotifier.alert_on = pray_names_to_notify
         #set location
+        
+        self.location.timezone = self.get_time_zone()
         self.praynotifier.praytime.location = self.location
         self.options.setLocation(self.location)
 
         self.plugin_handler.save()
         self.options.save()
+        self.update_tool_tip()
+    
+    
+    def get_time_zone(self):
+        timezone = 'AUTO'
+        if not self.ui['rdbtn_tz_auto'].get_active():
+            iter = self.ui['cmbbox_tz_select'].get_active_iter()
+            if iter:
+                model = self.ui['cmbbox_tz_select'].get_model()
+                timezone = model.get_value(iter, 1)
+        print timezone
+        return timezone
 
     def settings_ok(self, *args):
         self.apply_config(*args)
