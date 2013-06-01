@@ -102,6 +102,7 @@ class PyazanGTK(object):
         self.ui["btn_pref_apply"].connect("released", self.apply_config)
         self.ui["btn_pref_ok"].connect("released", self.settings_ok)
         self.ui["btn_change_loc"].connect("released", self.load_location)
+        self.ui["pref_window"].connect("delete-event", lambda a,b: a.hide() or True)
 
         self.status_icon.connect("popup-menu", self.show_status_icon_popup)
 

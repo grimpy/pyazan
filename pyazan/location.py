@@ -40,17 +40,19 @@ class Location(object):
     __repr__ = __str__
 
 def _get_url(search):
-    return "http://maps.google.com/maps/geo?%s" % urllib.urlencode({"q":search, "output":"json"})
+    return "http://maps.googleapis.com/maps/api/geocode/json?%s" % urllib.urlencode({"address":search, "sensor": "false"})
 
 def search(location):
-    urlo = urllib2.urlopen(_get_url(location))
+    url = _get_url(location)
+    print url
+    urlo = urllib2.urlopen(url)
     data = urlo.read()
     rawdata = json.loads(data)
-    if rawdata["Status"]["code"] != 200:
+    if rawdata["status"] != "OK":
         return
-    for place in rawdata["Placemark"]:
-        long, lat = place["Point"]["coordinates"][:-1]
-        info = Location(str(place["address"]), long, lat, 'auto')
+    for place in rawdata["results"]:
+        location = place['geometry']['location']
+        info = Location(place["formatted_address"], location['lng'], location['lat'], 'auto')
         yield info
 
 if __name__ == '__main__':
