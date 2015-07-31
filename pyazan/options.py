@@ -45,10 +45,13 @@ class Options(object):
 
     def getOption(self, section, value, default, boolean=False):
         if self.options.has_section(section):
-            if boolean:
-                return self.options.getboolean(section, value)
+            if self.options.has_option(section, value):
+                if boolean:
+                    return self.options.getboolean(section, value)
+                else:
+                    return self.options.get(section, value)
             else:
-                return self.options.get(section, value)
+                return default
         return default
 
     def setLocation(self, location):
