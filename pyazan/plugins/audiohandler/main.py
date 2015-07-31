@@ -6,7 +6,8 @@ class Plugin(plugin.Plugin):
     def __init__(self, *args, **kwargs):
         super(Plugin, self).__init__(*args, **kwargs)
         self.name = "audiohandler"
-        self.file = None
+        self.file = self.getAzanFile()
+        self.volume = self.getVolume()
 
     def play(self, *args):
         logging.info("Play")
@@ -16,8 +17,6 @@ class Plugin(plugin.Plugin):
         self.player.set_state(gst.STATE_PLAYING)
 
     def load(self):
-        self.file = self.getAzanFile()
-        self.volume = self.getVolume()
         self.pyazan.praynotifier.onTime.addCallback(self.play)
 
     def getAzanFile(self):
